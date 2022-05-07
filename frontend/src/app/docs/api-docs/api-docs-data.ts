@@ -107,12 +107,15 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  progressPercent: 44.397234501112074,
-  difficultyChange: 0.9845932018381687,
-  estimatedRetargetDate: 1627762478.9111245,
-  remainingBlocks: 1121,
-  remainingTime: 665977.6261244365,
-  previousRetarget: -4.807005268478962
+  "progressPercent": 77.03373015873017,
+  "difficultyChange": 4.326716334278036,
+  "estimatedRetargetDate": 1653884235546.3806,
+  "remainingBlocks": 463,
+  "remainingTime": 1652232269555.6936,
+  "previousRetarget": 5.556874621441932,
+  "nextRetargetHeight": 735840,
+  "timeAvg": 575116.34707021,
+  "timeOffset": 0
 }`
         },
         codeSampleTestnet: {
@@ -120,12 +123,15 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  progressPercent: 44.397234501112074,
-  difficultyChange: 0.9845932018381687,
-  estimatedRetargetDate: 1627762478.9111245,
-  remainingBlocks: 1121,
-  remainingTime: 665977.6261244365,
-  previousRetarget: -4.807005268478962
+  "progressPercent": 68.89880952380952,
+  "difficultyChange": 50.09537080393471,
+  "estimatedRetargetDate": 1653869404409.3079,
+  "remainingBlocks": 627,
+  "remainingTime": 1652217437612.337,
+  "previousRetarget": 300,
+  "nextRetargetHeight": 2223648,
+  "timeAvg": 399745.83945281216,
+  "timeOffset": 0
 }`
         },
         codeSampleSignet: {
@@ -133,12 +139,15 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  progressPercent: 44.397234501112074,
-  difficultyChange: 0.9845932018381687,
-  estimatedRetargetDate: 1627762478.9111245,
-  remainingBlocks: 1121,
-  remainingTime: 665977.6261244365,
-  previousRetarget: -4.807005268478962
+  "progressPercent": 30.555555555555557,
+  "difficultyChange": -3.5859426937504657,
+  "estimatedRetargetDate": 1654490038666.3164,
+  "remainingBlocks": 1400,
+  "remainingTime": 1652838071836.7273,
+  "previousRetarget": null,
+  "nextRetargetHeight": 90720,
+  "timeAvg": 622315.8912337446,
+  "timeOffset": 0
 }`
         },
         codeSampleLiquid: {
