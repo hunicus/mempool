@@ -43,6 +43,8 @@ Your Mempool instance should be running at http://localhost. The graphs will be 
 
 First, configure `bitcoind` as specified above, and make sure your Electrum server is running and synced.
 
+If you're not sure which Electrum server implementation to use, see our [this FAQ](https://mempool.space/docs/faq#address-lookup-issues).
+
 Then, make sure the following variables are set in `docker-compose.yml`, as shown below, so Mempool can connect to your Electrum server:
 
 ```

@@ -49,6 +49,8 @@ $ git checkout $latestrelease
 
 ### 2. Configure Bitcoin Core
 
+Make sure Bitcoin Core is installed and fully synced.
+
 Enable RPC and txindex in `bitcoin.conf`:
 
 ```bash
@@ -57,7 +59,23 @@ rpcpassword=mempool
 txindex=1
 ```
 
-### 3. Get & Configure MySQL
+### 3. Get Electrum Server
+
+Pick an Electrum server implementation, install it, and make sure it's fully synced.
+
+For advice on which Electrum server to use, see [this FAQ](https://mempool.space/docs/faq#address-lookup-issues).
+
+### 4. Get Node.js and npm
+
+Node.js v16.10 and npm v7 are recommended.
+
+Using `nvm`:
+
+```bash
+nvm install 16.10
+```
+
+### 5. Get & Configure MySQL
 
 Install MariaDB from your OS package manager:
 
@@ -83,7 +101,7 @@ MariaDB [(none)]> grant all privileges on mempool.* to 'mempool'@'%' identified 
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-### 4. Build Mempool Backend
+### 6. Build Mempool Backend
 
 Install Mempool dependencies with npm and build the backend:
 
@@ -159,7 +177,7 @@ Mempool updated in 0.243 seconds
 Updating mempool
 ```
 
-### 5. Build Mempool Frontend
+### 7. Build Mempool Frontend
 
 Install the Mempool dependencies with npm and build the frontend:
 
@@ -175,7 +193,7 @@ Install the output into the nginx webroot folder:
 $ sudo rsync -av --delete dist/ /var/www/
 ```
 
-### 6. `nginx` + `certbot`
+### 8. `nginx` + `certbot`
 
 Install the supplied `nginx.conf` and `nginx-mempool.conf` in `/etc/nginx`:
 
