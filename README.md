@@ -17,7 +17,7 @@ We support the following installation methods, ranked in order from simple to ad
 3) [Manual installation on Linux or FreeBSD](#manual-installation)
 4) [Production installation on a powerful FreeBSD server](./production)
 
-This doc offers install notes on the one-click method and manual install method. Follow the links above for install notes on Docker and production installations.
+No matter how you install Mempool, running an Electrum server is **optional**. Mempool primarily relies on Bitcoin Core for data, and only uses Electrum server for address lookups.
 
 <a id="one-click-installation"></a>
 ## One-Click Installation
