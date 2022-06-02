@@ -2672,11 +2672,11 @@ export const restApiDocsData = [
     fragment: "get-blocks",
     title: "GET Blocks",
     description: {
-      default: "Returns details on the past 10 blocks. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned."
+      default: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned."
     },
-    urlString: "/blocks[/:startHeight]",
-    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),
-    showJsExamples: showJsExamplesDefault,
+    urlString: "/v1/blocks[/:startHeight]",
+    showConditions: bitcoinNetworks,
+    showJsExamples: showJsExamplesDefaultFalse,
     codeExample: {
       bisq: {
         codeTemplate: {
@@ -2732,27 +2732,84 @@ export const restApiDocsData = [
           `,
         },
         codeSampleMainnet: {
-          esModule: ['698777'],
-          commonJS: ['698777'],
-          curl: ['698777'],
+          esModule: ['730000'],
+          commonJS: ['730000'],
+          curl: ['730000'],
           response: `[
   {
-    id: "00000000000000000003002915e015c47610c55b6f0228ad62bfcc59b65e67b7",
-    height: 698777,
-    version: 536870916,
-    timestamp: 1630641711,
-    tx_count: 2327,
-    size: 1466537,
-    weight: 3999653,
-    merkle_root: "023e27dde144eedc65ff3b27c535ebc7dced6c49fe78f94cdf85cf2000608d2f",
-    previousblockhash: "0000000000000000000701a7f14e362d3f10aa524200db1710ce3bbf0c0f8b75",
-    mediantime: 1630636986,
-    nonce: 1926094388,
-    bits: 386923168,
-    difficulty: 17615033039278
+    "id": "0000000000000000000384f28cb3b9cf4377a39cfd6c29ae9466951de38c0529",
+    "timestamp": 1648829449,
+    "height": 730000,
+    "version": 536870912,
+    "bits": 386521239,
+    "nonce": 3580664066,
+    "difficulty": 28587155782195.14,
+    "merkle_root": "efa344bcd6c0607f93b709515dd6dc5496178112d680338ebea459e3de7b4fbc",
+    "tx_count": 1627,
+    "size": 1210916,
+    "weight": 3993515,
+    "previousblockhash": "00000000000000000008b6f6fb83f8d74512ef1e0af29e642dd20daddd7d318f",
+    "extras": {
+      "coinbaseRaw": "0390230b1362696e616e63652f383038e0006f02cd583765fabe6d6d686355577affaad03015e732428a927a5d2d842471b350394139616bcb4401d804000000000000001a750000c9ad0000",
+      "medianFee": 11,
+      "feeRange": [
+        1,
+        11,
+        11,
+        11,
+        18,
+        21,
+        660
+      ],
+      "reward": 641321983,
+      "totalFees": 16321983,
+      "avgFee": 10038,
+      "avgFeeRate": 16,
+      "pool": {
+        "id": 105,
+        "name": "Binance Pool",
+        "slug": "binancepool"
+      }
+    }
+  },
+  {
+    "id": "00000000000000000008b6f6fb83f8d74512ef1e0af29e642dd20daddd7d318f",
+    "timestamp": 1648828946,
+    "height": 729999,
+    "version": 793796608,
+    "bits": 386521239,
+    "nonce": 3477019455,
+    "difficulty": 28587155782195.14,
+    "merkle_root": "d84f9cc1823bd069c505061b1f6faabd809d67ab5354e9f6234312dc4bdb1ecf",
+    "tx_count": 2574,
+    "size": 1481957,
+    "weight": 3993485,
+    "previousblockhash": "000000000000000000071e6c86c2175aa86817cae2a77acd95372b55c1103d89",
+    "extras": {
+      "coinbaseRaw": "038f230b1362696e616e63652f373739d8002900ca5de7a9fabe6d6dda31112c36c10a523154eae76847579755cd4ae558ee2e6f9f200b05dd32a0bf04000000000000006372000000020000",
+      "medianFee": 17,
+      "feeRange": [
+        2,
+        11,
+        14,
+        17,
+        19,
+        28,
+        502
+      ],
+      "reward": 649090210,
+      "totalFees": 24090210,
+      "avgFee": 9362,
+      "avgFeeRate": 24,
+      "pool": {
+        "id": 105,
+        "name": "Binance Pool",
+        "slug": "binancepool"
+      }
+    }
   },
   ...
-]`
+]`,
         },
         codeSampleTestnet: {
           esModule: ['2091187'],
@@ -2840,151 +2897,6 @@ export const restApiDocsData = [
   ...
 ]`
         },
-        codeSampleBisq: emptyCodeSample,
-      }
-    }
-  },
-  {
-    type: "endpoint",
-    category: "blocks",
-    httpRequestMethod: "GET",
-    fragment: "get-blocks-extras",
-    title: "GET Blocks Extras",
-    description: {
-      default: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned."
-    },
-    urlString: "/v1/blocks-extras[/:startHeight]",
-    showConditions: bitcoinNetworks,
-    showJsExamples: showJsExamplesDefaultFalse,
-    codeExample: {
-      default: {
-        codeTemplate: {
-          curl: `/api/v1/blocks-extras/%{1}`,
-          commonJS: ``,
-          esModule: ``
-        },
-        codeSampleMainnet: {
-          esModule: [],
-          commonJS: [],
-          curl: ['736915'],
-          response: `[
-  {
-    "extras": {
-      "reward": 629766074,
-      "coinbaseTx": {
-        "vin": [
-          {
-            "scriptsig": "03933e0b215c204d41524120506f6f6c205c00000000be82a250e5ef942790d2542ca87d0000"
-          }
-        ],
-        "vout": [
-          {
-            "scriptpubkey_address": "1A32KFEX7JNPmU1PVjrtiXRrTQcesT3Nf1",
-            "value": 629766074
-          }
-        ]
-      },
-      "coinbaseRaw": "03933e0b215c204d41524120506f6f6c205c00000000be82a250e5ef942790d2542ca87d0000",
-      "medianFee": 14,
-      "feeRange": [
-        1,
-        1,
-        4,
-        14,
-        15,
-        20,
-        364
-      ],
-      "totalFees": 4766074,
-      "avgFee": 5043,
-      "avgFeeRate": 14,
-      "pool": {
-        "id": 115,
-        "name": "MARA Pool",
-        "slug": "marapool"
-      },
-      "matchRate": 100
-    },
-    "id": "00000000000000000000a742ae476dbe2a58c48b193484945c52b05967f2d74c",
-    "height": 736915,
-    "version": 541065216,
-    "timestamp": 1652877171,
-    "bits": 386466234,
-    "nonce": 4069175824,
-    "difficulty": 31251101365711.12,
-    "merkle_root": "de54fd1adee9f010534e8efbf1244a01528e20dd283c8927026f5442c3e03459",
-    "tx_count": 946,
-    "size": 524907,
-    "weight": 1362339,
-    "previousblockhash": "000000000000000000070760a253405ca69498464d9f8e9fab2452cbbfc10cbe"
-  },
-  {
-    "extras": {
-      "reward": 638804415,
-      "coinbaseTx": {
-        "vin": [
-          {
-            "scriptsig": "03923e0bfabe6d6dc3e96cee3cb68ee52bd31fde8e1f4983a780ea836115788d81a559e03791071f01000000000000001065040008d708c7010000000000007a6d4683012f736c7573682f"
-          }
-        ],
-        "vout": [
-          {
-            "scriptpubkey_address": "1CK6KHY6MHgYvmRQ4PAafKYDrg1ejbH1cE",
-            "value": 638804415
-          }
-        ]
-      },
-      "coinbaseRaw": "03923e0bfabe6d6dc3e96cee3cb68ee52bd31fde8e1f4983a780ea836115788d81a559e03791071f01000000000000001065040008d708c7010000000000007a6d4683012f736c7573682f",
-      "medianFee": 14,
-      "feeRange": [
-        1,
-        1,
-        2,
-        14,
-        15,
-        20,
-        347
-      ],
-      "totalFees": 13804415,
-      "avgFee": 5287,
-      "avgFeeRate": 14,
-      "pool": {
-        "id": 43,
-        "name": "SlushPool",
-        "slug": "slushpool"
-      },
-      "matchRate": 100
-    },
-    "id": "000000000000000000070760a253405ca69498464d9f8e9fab2452cbbfc10cbe",
-    "height": 736914,
-    "version": 555696132,
-    "timestamp": 1652876939,
-    "bits": 386466234,
-    "nonce": 3839610443,
-    "difficulty": 31251101365711.12,
-    "merkle_root": "dc6d15f641e7af26dbaf3ee37203155f8053a8755e85f4955d11ea0c54008b16",
-    "tx_count": 2612,
-    "size": 1450209,
-    "weight": 3931749,
-    "previousblockhash": "00000000000000000002b5b2afc1c62e61e53f966b965a9a8ce99112e24066ae"
-  },
-  ...
-]`,
-        },
-        codeSampleTestnet: {
-          esModule: [],
-          commonJS: [],
-          curl: ['2226118'],
-          response: `[]`
-        },
-        codeSampleSignet: {
-          esModule: [],
-          commonJS: [],
-          curl: ['88832'],
-          response: `[]`
-        },
-        codeSampleLiquid: emptyCodeSample,
-        codeSampleLiquidTestnet: emptyCodeSample,
         codeSampleBisq: emptyCodeSample,
       }
     }
