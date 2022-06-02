@@ -2676,11 +2676,11 @@ export const restApiDocsData = [
     },
     urlString: "/v1/blocks[/:startHeight]",
     showConditions: bitcoinNetworks,
-    showJsExamples: showJsExamplesDefaultFalse,
+    showJsExamples: showJsExamplesDefault,
     codeExample: {
       bisq: {
         codeTemplate: {
-          curl: `/api/blocks/%{1}/%{2}`,
+          curl: `/api/v1/blocks/%{1}/%{2}`,
           commonJS: `
         const { %{0}: { blocks } } = mempoolJS();
 
