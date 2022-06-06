@@ -6052,7 +6052,7 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: "why-is-transaction-stuck-in-mempool",
     title: "Why isn't my transaction confirming?",
-    answer: "<p>If it's been a while and your transaction hasn't confirmed, your transaction is probably using a lower feerate relative to other transactions currently in the mempool. Depending on how you made your transaction, there may be <a href='/docs/faq/#how-to-get-transaction-confirmed-quickly'>ways to accelerate the process</a>.</p><p>There's no need to panic—a Bitcoin transaction will always either confirm completely (or not at all) at some point. As long as you have your transaction's ID, you can always see where your funds are.</p><p style='font-weight:700'>This site only provides data about the Bitcoin network—it cannot help you get your transaction confirmed quicker.</p>"
+    answer: "<p>If it's been a while and your transaction hasn't confirmed, your transaction is probably using a lower feerate relative to other transactions currently in the mempool. Depending on how you made your transaction, there may be <a class='link-from-data-file' href='/docs/faq#how-to-get-transaction-confirmed-quickly'>ways to accelerate the process</a>.</p><p>There's no need to panic—a Bitcoin transaction will always either confirm completely (or not at all) at some point. As long as you have your transaction's ID, you can always see where your funds are.</p><p style='font-weight:700'>This site only provides data about the Bitcoin network—it cannot help you get your transaction confirmed quicker.</p>"
   },
   {
     type: "endpoint",
@@ -6068,7 +6068,7 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: "how-prevent-stuck-transaction",
     title: "How can I prevent a transaction from getting stuck in the future?",
-    answer: "<p>You must use an adequate transaction fee commensurate with how quickly you need the transaction to be confirmed. See Mempool's fee estimates on the <a href='/'>front page</a>.</p><p>Also consider using RBF (if your wallet supports it) so that you can bump the feerate on your transaction if it does end up getting stuck.</p>"
+    answer: "<p>You must use an adequate transaction fee commensurate with how quickly you need the transaction to be confirmed. See Mempool's fee estimates on the <a class='link-from-data-file' href='/'>front page</a>.</p><p>Also consider using RBF (if your wallet supports it) so that you can bump the feerate on your transaction if it does end up getting stuck.</p>"
   },
   {
     type: "category",
@@ -6107,7 +6107,7 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: "looking-up-fee-estimates",
     title: "How can I look up fee estimates?",
-    answer: "<p>See real-time fee estimates on <a href='/'>the main dashboard</a>.</p><p>Low priority is suggested for confirmation within 6 blocks (~1 hour), Medium priority is suggested for confirmation within 3 blocks (~30 minutes), and High priority is suggested for confirmation in the next block (~10 minutes).</p>"
+    answer: "<p>See real-time fee estimates on <a class='link-from-data-file' href='/'>the main dashboard</a>.</p><p>Low priority is suggested for confirmation within 6 blocks (~1 hour), Medium priority is suggested for confirmation within 3 blocks (~30 minutes), and High priority is suggested for confirmation in the next block (~10 minutes).</p>"
   },
   {
     type: "endpoint",
@@ -6115,7 +6115,7 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: "looking-up-historical-trends",
     title: "How can I explore historical trends?",
-    answer: "See the <a href='/graphs'>graphs page</a> for aggregate trends over time: mempool size over time and incoming transaction velocity over time."
+    answer: "See the <a class='link-from-data-file' href='/graphs'>graphs page</a> for aggregate trends over time: mempool size over time and incoming transaction velocity over time."
   },
   {
     type: "category",
@@ -6130,7 +6130,7 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: "who-runs-this-website",
     title: "Who runs this website?",
-    answer: "The official mempool.space website is operated by The Mempool Open Source Project. See more information on our <a href='/about'>About page</a>. There are also many unofficial instances of this website operated by individual members of the Bitcoin community."
+    answer: "The official mempool.space website is operated by The Mempool Open Source Project. See more information on our <a class='link-from-data-file' href='/about'>About page</a>. There are also many unofficial instances of this website operated by individual members of the Bitcoin community."
   },
   {
     type: "endpoint",
