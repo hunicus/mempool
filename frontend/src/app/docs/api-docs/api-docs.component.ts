@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { Env, StateService } from '../../services/state.service';
 import { Observable, merge, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { faqData, restApiDocsData, wsApiDocsData } from './api-docs-data';
 
 @Component({
@@ -27,6 +27,7 @@ export class ApiDocsComponent implements OnInit {
   constructor(
     private stateService: StateService,
     private route: ActivatedRoute,
+    private router: Router,
   ) { }
 
   ngAfterViewInit() {
@@ -38,6 +39,25 @@ export class ApiDocsComponent implements OnInit {
       window.addEventListener('scroll', function() {
         that.desktopDocsNavPosition = ( window.pageYOffset > 182 ) ? "fixed" : "relative";
       }, { passive: true} );
+
+      //make links coming from api-docs-data.ts open without reloading spa
+      document.querySelector('body').onclick = function( event: any ) {
+        if( event.target.className === "link-from-data-file" ) {
+          event.preventDefault();
+          const link = event.target.attributes.href.value;
+          if( link.indexOf( "#" ) < 0 ) {
+            that.router.navigate( [ that.baseNetworkUrl + link ] );
+          } else {
+            const path = that.baseNetworkUrl + link.substring( 0, link.indexOf("#") );
+            const fragment = link.substring( link.indexOf("#") + 1 );
+            that.router.navigate( [ path ], { fragment: fragment } );
+            setTimeout( () => {
+              document.getElementById( fragment ).scrollIntoView();
+            }, 1 );
+          }
+        }
+      };
+
     }, 1 );
   }
 
@@ -71,6 +91,10 @@ export class ApiDocsComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    document.querySelector('body').onclick = null;
+  }
+
   anchorLinkClick( event: any ) {
     let targetId = "";
     if( event.target.nodeName === "A" ) {
@@ -82,9 +106,7 @@ export class ApiDocsComponent implements OnInit {
       }
       targetId = element.hash.substring(1);
     }
-    if( this.route.snapshot.fragment === targetId ) {
-      document.getElementById( targetId ).scrollIntoView();
-    }
+    document.getElementById( targetId ).scrollIntoView();
     this.openEndpointContainer( targetId );
   }
 
