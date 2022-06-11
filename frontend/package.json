@@ -1,6 +1,6 @@
 {
   "name": "mempool-frontend",
-  "version": "2.4.0-dev",
+  "version": "2.4.1-dev",
   "description": "Bitcoin mempool visualizer and blockchain explorer backend",
   "license": "GNU Affero General Public License v3.0",
   "homepage": "https://mempool.space",
@@ -106,7 +106,7 @@
     "@types/express": "^4.17.0",
     "@types/jasmine": "~4.0.3",
     "@types/jasminewd2": "~2.0.10",
-    "@types/node": "^12.11.1",
+    "@types/node": "^17.0.42",
     "codelyzer": "~6.0.2",
     "http-proxy-middleware": "^1.0.5",
     "jasmine-core": "~4.1.0",
