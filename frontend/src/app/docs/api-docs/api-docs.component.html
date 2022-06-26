@@ -134,6 +134,14 @@
   Mining pools are groups of miners that combine their computational power in order to increase the probability of finding new blocks.
 </ng-template>
 
+<ng-template type="what-are-vb-wu">
+  <p>Virtual bytes (vB) and weight units (WU) are used to measure the size of transactions and blocks on the Bitcoin network (1 vB = 4 WU). They were devised to maintain backward compatibility after the SegWit upgrade in 2017.</p>
+
+  <p>A <a href="https://mempool.space/tx/f278bc11f99c1e4eea0be39b43c1f528f23589858671662c20a746614b4242b9" target="_blank">non-SegWit transaction's</a> virtual-byte size and plain-byte size are the same. However, a <a href="https://mempool.space/tx/b6419769f96401fbcde6fd9b8cd4b0b65df2172dd3558b22e7255cfb57ba31bf" target="_blank">SegWit transaction's</a> virtual-byte size is lower than its plain-byte size, because the Bitcoin protocol assigns a lower weight factor to its separated witness data. This weight factor is part of what enables old (pre-SegWit) nodes to continue imposing a 1,000,000-byte block limit and newer nodes to impose a 4,000,000-WU block limit without the network ever hardforking.</p>
+
+  <p>See <a href="https://programmingbitcoin.com/understanding-segwit-block-size" target="_blank">this post</a> for more details.</p>
+</ng-template>
+
 <ng-template type="what-is-full-mempool">
   <p>When a Bitcoin transaction is made, it is stored in a Bitcoin node's mempool before it is confirmed into a block. When the rate of incoming transactions exceeds the rate transactions are confirmed, the mempool grows in size.</p><p>The default maximum size of a Bitcoin node's mempool is 300MB, so when there are 300MB of transactions in the mempool, we say it's "full".</p>
 </ng-template>
