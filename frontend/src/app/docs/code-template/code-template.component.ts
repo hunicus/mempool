@@ -7,24 +7,41 @@ import { Env, StateService } from '../../services/state.service';
   styleUrls: ['./code-template.component.scss']
 })
 export class CodeTemplateComponent implements OnInit {
-  @Input() network: string;
-  @Input() code: any;
   @Input() hostname: string;
   @Input() baseNetworkUrl: string;
-  @Input() method: 'GET' | 'POST' | 'websocket' = 'GET';
-  @Input() showCodeExample: any;
+  @Input() item: any;
+  curlCodeTemplate: string;
+  commonJsCodeTemplate: string;
+  esModuleCodeTemplate: string;
+  pythonCodeTemplate: string;
   env: Env;
+  network: string;
 
   constructor(
     private stateService: StateService,
   ) { }
 
   ngOnInit(): void {
+    this.curlCodeTemplate = getCodeTemplate( 'curl' );
+    this.commonJsCodeTemplate = getCodeTemplate( 'commonJS' );
+    this.esModuleCodeTemplate = getCodeTemplate( 'esModule' );
+    this.pythonCodeTemplate = getCodeTemplate( 'python' );
     this.env = this.stateService.env;
+    this.network = this.stateService.network;
+  }
+
+  getCodeTemplate( templateType ) {
+    if( this.item.hasOwnProperty( this.stateService.network ) && this.item[ this.stateService.network ].hasOwnProperty( 'codeTemplates' ) &&  this.item[ this.stateService.network ][ 'codeTemplates' ].hasOwnProperty( templateType ) ) {
+      return this.item[ this.stateService.network ][ 'codeTemplates' ][ templateType ];
+    } else if( this.item.default.codeTemplates.hasOwnProperty( templateType ) ) {
+      return this.item[ 'default' ][ 'codeTemplates' ][ templateType ];
+    } else {
+      return "";
+    }
   }
 
   adjustContainerHeight( event ) {
-    if( ( window.innerWidth <= 992 ) && ( this.method !== "websocket" ) ) {
+    if( ( window.innerWidth <= 992 ) && ( this.item.httpRequestMethod !== "websocket" ) ) {
       const urlObj = new URL( window.location + "" );
       const endpointContainerEl = document.querySelector<HTMLElement>( urlObj.hash );
       const endpointContentEl = document.querySelector<HTMLElement>( urlObj.hash + " .endpoint-content" );
@@ -191,7 +208,7 @@ init();`;
       }
 
       let resultHtml = '<pre id="result"></pre>';
-      if (this.method === 'websocket') {
+      if (this.item.httpRequestMethod === 'websocket') {
         resultHtml = `<h2>Blocks</h2><pre id="result-blocks">Waiting for data</pre><br>
     <h2>Mempool Info</h2><pre id="result-mempool-info">Waiting for data</pre><br>
     <h2>Transactions</h2><pre id="result-transactions">Waiting for data</pre><br>
@@ -267,7 +284,7 @@ yarn add @mempool/liquid.js`;
   }
 
   wrapResponse(code: any) {
-    if (this.method === 'websocket') {
+    if (this.item.httpRequestMethod === 'websocket') {
       return '';
     }
     if (this.network === 'testnet') {
@@ -313,17 +330,17 @@ yarn add @mempool/liquid.js`;
 
     if (this.env.BASE_MODULE === 'mempool') {
       if (this.network === 'main' || this.network === '') {
-        if (this.method === 'POST') {
+        if (this.item.httpRequestMethod === 'POST') {
           return `curl -X POST -sSLd "${text}"`;
         }
         return `curl -sSL "${this.hostname}${text}"`;
       }
-      if (this.method === 'POST') {
+      if (this.item.httpRequestMethod === 'POST') {
         return `curl -X POST -sSLd "${text}"`;
       }
       return `curl -sSL "${this.hostname}/${this.network}${text}"`;
     } else if (this.env.BASE_MODULE === 'liquid') {
-      if (this.method === 'POST') {
+      if (this.item.httpRequestMethod === 'POST') {
         if (this.network !== 'liquid') {
           text = text.replace('/api', `/${this.network}/api`);
         }

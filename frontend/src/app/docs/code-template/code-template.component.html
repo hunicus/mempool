@@ -1,6 +1,6 @@
 <div class="code">
   <ul ngbNav #navCodeTemplate="ngbNav" class="nav-tabs code-tab" role="tablist">
-    <li ngbNavItem *ngIf="code.codeTemplate.curl && method !== 'websocket'" role="presentation">
+    <li ngbNavItem *ngIf="curlCodeTemplate && item.httpRequestMethod !== 'websocket'" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">cURL</a>
       <ng-template ngbNavContent>
         <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapCurlTemplate(code)"></app-clipboard></div>

@@ -46,48 +46,18 @@
             <div class="endpoint-content">
               <div class="endpoint">
                 <div class="subtitle" i18n="Api docs endpoint">Endpoint</div>
-                <ng-container *ngIf="item.httpRequestMethod === 'GET' && network.val === 'bisq' && item.codeExample.hasOwnProperty('bisq');else liquid_link_example" #bisq_link_example>
-                  <a [href]="wrapUrl(network.val, item.codeExample.bisq)" target="_blank" rel="nofollow">{{ item.httpRequestMethod }} {{ baseNetworkUrl }}/api{{ item.urlString }}</a>
-                </ng-container>
-                <ng-template #liquid_link_example>
-                  <ng-container *ngIf="item.httpRequestMethod === 'GET' && network.val === 'liquid' && item.codeExample.hasOwnProperty('liquid');else default_link_example">
-                    <a [href]="wrapUrl(network.val, item.codeExample.liquid)" target="_blank" rel="nofollow" *ngIf="item.fragment !== 'get-cpfp'">{{ item.httpRequestMethod }} {{ baseNetworkUrl }}/api{{ item.urlString }}</a>
-                    <p *ngIf="item.fragment === 'get-cpfp'">{{ item.httpRequestMethod }} {{ baseNetworkUrl }}/api{{ item.urlString }}</p>
-                  </ng-container>
-                </ng-template>
-                <ng-template #default_link_example>
-                  <ng-container *ngIf="item.httpRequestMethod === 'GET'">
-                    <a [href]="wrapUrl(network.val, item.codeExample.default)" target="_blank" rel="nofollow" *ngIf="item.fragment !== 'get-cpfp'">{{ item.httpRequestMethod }} {{ baseNetworkUrl }}/api{{ item.urlString }}</a>
-                    <p *ngIf="item.fragment === 'get-cpfp'">{{ item.httpRequestMethod }} {{ baseNetworkUrl }}/api{{ item.urlString }}</p>
-                  </ng-container>
-                </ng-template>
-                <div *ngIf="item.httpRequestMethod === 'POST'">{{ item.httpRequestMethod }} {{ item.urlString }}</div>
+                <div *ngIf="item.httpRequestMethod === 'GET'">
+                  <a [href]="getFullSampleUrl( item )" target="_blank" rel="nofollow">{{ item.httpRequestMethod }} {{ baseNetworkUrl }}/api{{ getReadableRelativeUrl( item ) }}</a>
+                </div>
+                <div *ngIf="item.httpRequestMethod === 'POST'">
+                  {{ item.httpRequestMethod }} /api{{ getReadableRelativeUrl( item ) }}
+                </div>
               </div>
               <div class="description">
                 <div class="subtitle" i18n>Description</div>
-                <ng-container *ngIf="network.val === 'bisq' && item.description.hasOwnProperty('bisq');else liquid_description" #bisq_description>
-                  <div [innerHTML]="item.description.bisq" i18n></div>
-                </ng-container>
-                <ng-template #liquid_description>
-                  <ng-container *ngIf="network.val === 'liquid' && item.description.hasOwnProperty('liquid');else default_description">
-                    <div [innerHTML]="item.description.liquid" i18n></div>
-                  </ng-container>
-                </ng-template>
-                <ng-template #default_description>
-                  <div [innerHTML]="item.description.default" i18n></div>
-                </ng-template>
+                <div [innerHTML]="getEndpointDescription( item )" i18n></div>
               </div>
-              <ng-container *ngIf="network.val === 'bisq' && item.codeExample.hasOwnProperty('bisq');else liquid_code_example" #bisq_code_example>
-                <app-code-template [hostname]="hostname" [baseNetworkUrl]="baseNetworkUrl" [method]="item.httpRequestMethod" [code]="item.codeExample.bisq" [network]="network.val" [showCodeExample]="item.showJsExamples"></app-code-template>
-              </ng-container>
-              <ng-template #liquid_code_example>
-                <ng-container *ngIf="network.val === 'liquid' && item.codeExample.hasOwnProperty('liquid');else default_code_example">
-                  <app-code-template [hostname]="hostname" [baseNetworkUrl]="baseNetworkUrl" [method]="item.httpRequestMethod" [code]="item.codeExample.liquid" [network]="network.val" [showCodeExample]="item.showJsExamples"></app-code-template>
-                </ng-container>
-              </ng-template>
-              <ng-template #default_code_example>
-                <app-code-template [hostname]="hostname" [baseNetworkUrl]="baseNetworkUrl" [method]="item.httpRequestMethod" [code]="item.codeExample.default" [network]="network.val" [showCodeExample]="item.showJsExamples"></app-code-template>
-              </ng-template>
+              <app-code-template [hostname]="hostname" [baseNetworkUrl]="baseNetworkUrl" [item]="item"></app-code-template>
             </div>
           </div>
         </div>
@@ -95,7 +65,7 @@
       </div>
     </div>
 
-    <div id="websocketAPI" *ngIf="( whichTab === 'websocket' ) && ( network.val !== 'bisq' )">
+    <!--<div id="websocketAPI" *ngIf="( whichTab === 'websocket' ) && ( network.val !== 'bisq' )">
       <div class="api-category">
         <div class="websocket">
           <div class="endpoint">
@@ -109,7 +79,7 @@
           <app-code-template [method]="'websocket'" [hostname]="hostname" [code]="wsDocs" [network]="network.val" [showCodeExample]="wsDocs.showJsExamples"></app-code-template>
         </div>
       </div>
-    </div>
+    </div>-->
 
     <div id="electrs" *ngIf="whichTab === 'electrs'">
       <div class="doc-content no-sidebar">

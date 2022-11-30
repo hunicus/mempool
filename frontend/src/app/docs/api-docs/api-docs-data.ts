@@ -118,95 +118,63 @@ export const restApiDocsData = [
     httpRequestMethod: "GET",
     fragment: "get-difficulty-adjustment",
     title: "GET Difficulty Adjustment",
-    description: {
-      default: "Returns details about difficulty adjustment."
-    },
-    urlString: "/v1/difficulty-adjustment",
     showConditions: bitcoinNetworks,
     showJsExamples: showJsExamplesDefault,
-    codeExample: {
-      default: {
-        codeTemplate: {
-          commonJS: `
+    default: {
+      description: "Returns details about difficulty adjustment.",
+      codeTemplates: {
+        curl: [ "/v1/difficulty-adjustment" ],
+        commonJS: `
         const { %{0}: { difficulty } } = mempoolJS();
 
         const difficultyAdjustment = await difficulty.getDifficultyAdjustment();
 
         document.getElementById("result").textContent = JSON.stringify(difficultyAdjustment, undefined, 2);
           `,
-          esModule: `
+        esModule: `
   const { %{0}: { difficulty } } = mempoolJS();
 
   const difficultyAdjustment = await difficulty.getDifficultyAdjustment();
   console.log(difficultyAdjustment);
           `,
-          curl: `/api/v1/difficulty-adjustment`,
-        },
-        codeSampleMainnet: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  progressPercent: 44.397234501112074,
-  difficultyChange: 98.45932018381687,
-  estimatedRetargetDate: 1627762478,
-  remainingBlocks: 1121,
-  remainingTime: 665977,
-  previousRetarget: -4.807005268478962,
-  nextRetargetHeight: 741888,
-  timeAvg: 302328,
-  timeOffset: 0
+      },
+      response: `{
+  "progressPercent": 53.323412698412696,
+  "difficultyChange": -10.371478953972623,
+  "estimatedRetargetDate": 1670335628689,
+  "remainingBlocks": 941,
+  "remainingTime": 629932689,
+  "previousRetarget": 0.5121980044909791,
+  "nextRetargetHeight": 766080,
+  "timeAvg": 669429,
+  "timeOffset": 0
 }`
-        },
-        codeSampleTestnet: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  progressPercent: 44.397234501112074,
-  difficultyChange: 98.45932018381687,
-  estimatedRetargetDate: 1627762478,
-  remainingBlocks: 1121,
-  remainingTime: 665977,
-  previousRetarget: -4.807005268478962,
-  nextRetargetHeight: 741888,
-  timeAvg: 302328,
-  timeOffset: 0
+    },
+    testnet: {
+      response: `{
+  "progressPercent": 90.37698412698413,
+  "difficultyChange": 27.06899758229495,
+  "estimatedRetargetDate": 1669797301696,
+  "remainingBlocks": 194,
+  "remainingTime": 91603696,
+  "previousRetarget": 11.976267373336526,
+  "nextRetargetHeight": 2409120,
+  "timeAvg": 472184,
+  "timeOffset": 0
+}`,
+    },
+    signet: {
+      response: `{
+  "progressPercent": 2.7777777777777777,
+  "difficultyChange": 0,
+  "estimatedRetargetDate": 1670882013000,
+  "remainingBlocks": 1960,
+  "remainingTime": 1176000000,
+  "previousRetarget": 1.3905994045412642,
+  "nextRetargetHeight": 120960,
+  "timeAvg": 600000,
+  "timeOffset": 0
 }`
-        },
-        codeSampleSignet: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  progressPercent: 44.397234501112074,
-  difficultyChange: 98.45932018381687,
-  estimatedRetargetDate: 1627762478,
-  remainingBlocks: 1121,
-  remainingTime: 665977,
-  previousRetarget: -4.807005268478962,
-  nextRetargetHeight: 741888,
-  timeAvg: 302328,
-  timeOffset: 0
-}`
-        },
-        codeSampleLiquid: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  progressPercent: 44.397234501112074,
-  difficultyChange: 98.45932018381687,
-  estimatedRetargetDate: 1627762478,
-  remainingBlocks: 1121,
-  remainingTime: 665977,
-  previousRetarget: -4.807005268478962,
-  nextRetargetHeight: 741888,
-  timeAvg: 302328,
-  timeOffset: 0
-}`
-        }
-      }
     }
   },
   {
@@ -215,47 +183,33 @@ export const restApiDocsData = [
     httpRequestMethod: "GET",
     fragment: "get-stats",
     title: "GET Stats",
-    description: {
-      default: "Returns statistics about all Bisq transactions."
-    },
-    urlString: "/stats",
     showConditions: ["bisq"],
     showJsExamples: showJsExamplesDefault,
-    codeExample: {
-      default: {
-        codeTemplate: {
-          commonJS: `
+    default: {
+      description: "Returns statistics about all Bisq transactions.",
+      codeTemplates: {
+        curl: [ "/stats" ],
+        commonJS: `
         const { %{0}: { statistics } } = mempoolJS();
 
         const stats = await statistics.getStats();
 
         document.getElementById("result").textContent = JSON.stringify(stats, undefined, 2);
           `,
-          esModule: `
+        esModule: `
   const { %{0}: { statistics } } = mempoolJS();
 
   const stats = await statistics.getStats();
   console.log(stats);
           `,
-          curl: `/api/stats`,
-        },
-        codeSampleMainnet: emptyCodeSample,
-        codeSampleTestnet: emptyCodeSample,
-        codeSampleSignet: emptyCodeSample,
-        codeSampleLiquid: emptyCodeSample,
-        codeSampleBisq: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  addresses: 213825,
-  minted: 6148323.75,
-  burnt: 1830262.66,
-  spent_txos: 215705,
-  unspent_txos: 2572
-}`
-        },
-      }
+      },
+      response: `{
+        addresses: 213825,
+        minted: 6148323.75,
+        burnt: 1830262.66,
+        spent_txos: 215705,
+        unspent_txos: 2572
+      }`
     }
   },
   {
