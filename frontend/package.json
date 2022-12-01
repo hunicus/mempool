@@ -92,7 +92,7 @@
     "echarts-gl": "^2.0.9",
     "express": "^4.17.1",
     "lightweight-charts": "~3.8.0",
-    "ngx-echarts": "8.0.1",
+    "ngx-echarts": "15.0.1",
     "ngx-infinite-scroll": "^10.0.1",
     "qrcode": "1.5.0",
     "rxjs": "~7.5.5",
