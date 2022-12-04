@@ -10,10 +10,12 @@ export class CodeTemplateComponent implements OnInit {
   @Input() hostname: string;
   @Input() baseNetworkUrl: string;
   @Input() item: any;
+  @Input() sampleUrl: string;
   curlCodeTemplate: string;
   commonJsCodeTemplate: string;
   esModuleCodeTemplate: string;
   pythonCodeTemplate: string;
+  responseTemplate: string;
   env: Env;
   network: string;
 
@@ -22,12 +24,13 @@ export class CodeTemplateComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.curlCodeTemplate = getCodeTemplate( 'curl' );
-    this.commonJsCodeTemplate = getCodeTemplate( 'commonJS' );
-    this.esModuleCodeTemplate = getCodeTemplate( 'esModule' );
-    this.pythonCodeTemplate = getCodeTemplate( 'python' );
+    this.curlCodeTemplate = this.sampleUrl;
+    this.commonJsCodeTemplate = this.getCodeTemplate( 'commonJS' );
+    this.esModuleCodeTemplate = this.getCodeTemplate( 'esModule' );
+    this.pythonCodeTemplate = this.getCodeTemplate( 'python' );
+    this.responseTemplate = this.getResponseTemplate();
     this.env = this.stateService.env;
-    this.network = this.stateService.network;
+    this.network = ( this.stateService.network === "" ) ? "mainnet" : this.stateService.network;
   }
 
   getCodeTemplate( templateType ) {
@@ -35,6 +38,16 @@ export class CodeTemplateComponent implements OnInit {
       return this.item[ this.stateService.network ][ 'codeTemplates' ][ templateType ];
     } else if( this.item.default.codeTemplates.hasOwnProperty( templateType ) ) {
       return this.item[ 'default' ][ 'codeTemplates' ][ templateType ];
+    } else {
+      return "";
+    }
+  }
+
+  getResponseTemplate() {
+    if( this.item.hasOwnProperty( this.stateService.network ) && this.item[ this.stateService.network ].hasOwnProperty( 'response' ) ) {
+      return this.item[ this.stateService.network ][ 'response' ];
+    } else if( this.item.default.hasOwnProperty( 'response' ) ) {
+      return this.item[ 'default' ][ 'response' ];
     } else {
       return "";
     }
@@ -52,25 +65,21 @@ export class CodeTemplateComponent implements OnInit {
   }
 
   npmGithubLink(){
-    let npmLink = `https://github.com/mempool/mempool.js`;
-    if (this.network === 'bisq') {
-      npmLink = `https://github.com/mempool/mempool.js/tree/main/npm-bisq-js`;
+    if( this.network === 'bisq' ) {
+      return 'https://github.com/mempool/mempool.js/tree/main/npm-bisq-js';
+    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
+      return 'https://github.com/mempool/mempool.js/tree/main/npm-liquid-js';
     }
-    if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-      npmLink = `https://github.com/mempool/mempool.js/tree/main/npm-liquid-js`;
-    }
-    return npmLink;
+    return 'https://github.com/mempool/mempool.js';
   }
 
   npmModuleLink() {
-    let npmLink = `https://www.npmjs.org/package/@mempool/mempool.js`;
-    if (this.network === 'bisq') {
-      npmLink = `https://www.npmjs.org/package/@mempool/bisq.js`;
+    if( this.network === 'bisq' ) {
+      return 'https://www.npmjs.org/package/@mempool/bisq.js';
+    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
+      return 'https://www.npmjs.org/package/@mempool/liquid.js';
     }
-    if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-      npmLink = `https://www.npmjs.org/package/@mempool/liquid.js`;
-    }
-    return npmLink;
+    return 'https://www.npmjs.org/package/@mempool/mempool.js';
   }
 
   normalizeHostsESModule(codeText: string) {
@@ -135,43 +144,43 @@ export class CodeTemplateComponent implements OnInit {
     return codeText;
   }
 
-  wrapEsModule(code: any) {
+  wrapEsModule( response: string ) {
     let codeText: string;
-    if (code.codeTemplate) {
-      codeText = this.normalizeHostsESModule(code.codeTemplate.esModule);
+    
+    codeText = this.normalizeHostsESModule(response);
 
-      if(this.network === '' || this.network === 'main') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
-      }
-      if (this.network === 'testnet') {
-      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleTestnet.esModule);
-      }
-      if (this.network === 'signet') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleSignet.esModule);
-      }
-      if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleLiquid.esModule);
-      }
-      if (this.network === 'bisq') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleBisq.esModule);
-      }
+    if(this.network === 'mainnet') {
+      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
+    }
+    if (this.network === 'testnet') {
+    codeText = this.replaceJSPlaceholder(codeText, code.codeSampleTestnet.esModule);
+    }
+    if (this.network === 'signet') {
+      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleSignet.esModule);
+    }
+    if (this.network === 'liquid' || this.network === 'liquidtestnet') {
+      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleLiquid.esModule);
+    }
+    if (this.network === 'bisq') {
+      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleBisq.esModule);
+    }
 
-      let importText = `import mempoolJS from "@mempool/mempool.js";`;
-      if (this.env.BASE_MODULE === 'bisq') {
-        importText = `import bisqJS from "@mempool/bisq.js";`;
-      }
-      if (this.env.BASE_MODULE === 'liquid') {
-        importText = `import liquidJS from "@mempool/liquid.js";`;
-      }
+    let importText = `import mempoolJS from "@mempool/mempool.js";`;
+    if (this.env.BASE_MODULE === 'bisq') {
+      importText = `import bisqJS from "@mempool/bisq.js";`;
+    }
+    if (this.env.BASE_MODULE === 'liquid') {
+      importText = `import liquidJS from "@mempool/liquid.js";`;
+    }
 
-      return `${importText}
+    return `${importText}
 
 const init = async () => {
-  ${codeText}
+${codeText}
 };
 
 init();`;
-    }
+    
   }
 
   wrapCommonJS(code: any) {
@@ -260,49 +269,12 @@ yarn add @mempool/liquid.js`;
     return importTemplate;
   }
 
-  wrapCurlTemplate(code: any) {
-    if (code.codeTemplate) {
-      if (this.network === 'testnet') {
-        return this.replaceCurlPlaceholder(code.codeTemplate.curl, code.codeSampleTestnet);
-      }
-      if (this.network === 'signet') {
-        return this.replaceCurlPlaceholder(code.codeTemplate.curl, code.codeSampleSignet);
-      }
-      if (this.network === 'liquid') {
-        return this.replaceCurlPlaceholder(code.codeTemplate.curl, code.codeSampleLiquid);
-      }
-      if (this.network === 'liquidtestnet') {
-        return this.replaceCurlPlaceholder(code.codeTemplate.curl, code.codeSampleLiquidTestnet);
-      }
-      if (this.network === 'bisq') {
-        return this.replaceCurlPlaceholder(code.codeTemplate.curl, code.codeSampleBisq);
-      }
-      if (this.network === '' || this.network === 'main') {
-        return this.replaceCurlPlaceholder(code.codeTemplate.curl, code.codeSampleMainnet);
-      }
+  wrapCurlTemplate( curlUrl: string ) {
+    if( this.item.httpRequestMethod === 'GET' ) {
+      return `curl -sSL ${curlUrl}`;
+    } else {
+      return `curl -X POST -sSLd ${curlUrl}`;
     }
-  }
-
-  wrapResponse(code: any) {
-    if (this.item.httpRequestMethod === 'websocket') {
-      return '';
-    }
-    if (this.network === 'testnet') {
-      return code.codeSampleTestnet.response;
-    }
-    if (this.network === 'signet') {
-      return code.codeSampleSignet.response;
-    }
-    if (this.network === 'liquid') {
-      return code.codeSampleLiquid.response;
-    }
-    if (this.network === 'liquidtestnet') {
-      return code.codeSampleLiquidTestnet.response;
-    }
-    if (this.network === 'bisq') {
-      return code.codeSampleBisq.response;
-    }
-    return code.codeSampleMainnet.response;
   }
 
   wrapPythonTemplate(code: any) {
@@ -316,41 +288,6 @@ yarn add @mempool/liquid.js`;
       text = text.replace('%{' + indexNumber + '}', textReplace);
     }
     return text;
-  }
-
-  replaceCurlPlaceholder(curlText: any, code: any) {
-    let text = curlText;
-    text = text.replace( "[[hostname]]", this.hostname );
-    text = text.replace( "[[baseNetworkUrl]]", this.baseNetworkUrl );
-    for (let index = 0; index < code.curl.length; index++) {
-      const textReplace = code.curl[index];
-      const indexNumber = index + 1;
-      text = text.replace('%{' + indexNumber + '}', textReplace);
-    }
-
-    if (this.env.BASE_MODULE === 'mempool') {
-      if (this.network === 'main' || this.network === '') {
-        if (this.item.httpRequestMethod === 'POST') {
-          return `curl -X POST -sSLd "${text}"`;
-        }
-        return `curl -sSL "${this.hostname}${text}"`;
-      }
-      if (this.item.httpRequestMethod === 'POST') {
-        return `curl -X POST -sSLd "${text}"`;
-      }
-      return `curl -sSL "${this.hostname}/${this.network}${text}"`;
-    } else if (this.env.BASE_MODULE === 'liquid') {
-      if (this.item.httpRequestMethod === 'POST') {
-        if (this.network !== 'liquid') {
-          text = text.replace('/api', `/${this.network}/api`);
-        }
-        return `curl -X POST -sSLd "${text}"`;
-      }
-      return ( this.network === 'liquid' ? `curl -sSL "${this.hostname}${text}"` : `curl -sSL "${this.hostname}/${this.network}${text}"` );
-    } else {
-        return `curl -sSL "${this.hostname}${text}"`;
-    }
-
   }
 
 }

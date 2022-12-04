@@ -152,12 +152,20 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
 
   getReadableRelativeUrl( item ) {
     let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ][0] : item[ 'default' ][ 'codeTemplates' ][ 'curl' ][0] );
-    return baseUrl;
+    if( [ '', 'mainnet' ].includes( this.stateService.network ) ) {
+      return baseUrl;
+    } else {
+      return "/" + this.stateService.network + baseUrl;
+    }
   }
 
   getFullSampleUrl( item ) {
     let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ][0] : item[ 'default' ][ 'codeTemplates' ][ 'curl' ][0] );
-    return `${document.location.protocol}//${this.hostname}/api${baseUrl}`;
+    if( [ '', 'mainnet' ].includes( this.stateService.network ) ) {
+      return `${document.location.protocol}//${this.hostname}/api${baseUrl}`;
+    } else {
+      return `${document.location.protocol}//${this.hostname}/${this.stateService.network}/api${baseUrl}`;
+    }
   }
 
   getEndpointDescription( item ) {
