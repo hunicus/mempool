@@ -132,19 +132,25 @@ export const restApiDocsData = [
       description: "Returns details about difficulty adjustment.",
       codeTemplates: {
         curl: [ "/v1/difficulty-adjustment" ],
-        commonJS: `
+        commonJS: {
+          text: `
         const { %{0}: { difficulty } } = mempoolJS();
 
         const difficultyAdjustment = await difficulty.getDifficultyAdjustment();
 
         document.getElementById("result").textContent = JSON.stringify(difficultyAdjustment, undefined, 2);
           `,
-        esModule: `
+          options: {}
+        },
+        esModule: {
+          text: `
   const { %{0}: { difficulty } } = mempoolJS();
 
   const difficultyAdjustment = await difficulty.getDifficultyAdjustment();
   console.log(difficultyAdjustment);
           `,
+          options: {}
+        }
       },
       response: `{
   "progressPercent": 53.323412698412696,
@@ -197,19 +203,25 @@ export const restApiDocsData = [
       description: "Returns statistics about all Bisq transactions.",
       codeTemplates: {
         curl: [ "/stats" ],
-        commonJS: `
+        commonJS: { 
+          text: `
         const { %{0}: { statistics } } = mempoolJS();
 
         const stats = await statistics.getStats();
 
         document.getElementById("result").textContent = JSON.stringify(stats, undefined, 2);
           `,
-        esModule: `
+          options: {}
+        },
+        esModule: {
+          text: `
   const { %{0}: { statistics } } = mempoolJS();
 
   const stats = await statistics.getStats();
   console.log(stats);
           `,
+          options: {}
+        }
       },
       response: `{
         addresses: 213825,

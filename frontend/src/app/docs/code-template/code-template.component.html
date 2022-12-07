@@ -7,7 +7,7 @@
         <pre><code [innerText]="wrapCurlTemplate(curlCodeTemplate)"></code></pre>
       </ng-template>
     </li>
-    <li ngbNavItem *ngIf="item[network][1]" role="presentation">
+    <li ngbNavItem *ngIf="item['showCodeExamples'][network][1]" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">CommonJS</a>
       <ng-template ngbNavContent>
         <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapCommonJS(commonJsCodeTemplate)"></app-clipboard></div>
@@ -17,7 +17,7 @@
         <pre><code [innerText]="wrapCommonJS(commonJsCodeTemplate)"></code></pre>
       </ng-template>
     </li>
-    <li ngbNavItem *ngIf="item[network][2]" role="presentation">
+    <li ngbNavItem *ngIf="item['showCodeExamples'][network][2]" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">ES Module</a>
       <ng-template ngbNavContent>
         <div class="subtitle"><ng-container i18n="API Docs install lib">Install Package</ng-container> <app-clipboard [text]="wrapImportTemplate()"></app-clipboard></div>
@@ -30,7 +30,7 @@
         <pre><code [innerText]="wrapEsModule(esModuleCodeTemplate)"></code></pre>
       </ng-template>
     </li>
-    <li ngbNavItem *ngIf="item[network][3]" role="presentation">
+    <li ngbNavItem *ngIf="item['showCodeExamples'][network][3]" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">Python</a>
       <ng-template ngbNavContent>
         <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapPythonModule(pythonCodeTemplate)"></app-clipboard></div>

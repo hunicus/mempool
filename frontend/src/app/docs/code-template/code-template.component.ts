@@ -12,9 +12,9 @@ export class CodeTemplateComponent implements OnInit {
   @Input() item: any;
   @Input() sampleUrl: string;
   curlCodeTemplate: string;
-  commonJsCodeTemplate: string;
-  esModuleCodeTemplate: string;
-  pythonCodeTemplate: string;
+  commonJsCodeTemplate: any;
+  esModuleCodeTemplate: any;
+  pythonCodeTemplate: any;
   responseTemplate: string;
   env: Env;
   network: string;
@@ -39,7 +39,7 @@ export class CodeTemplateComponent implements OnInit {
     } else if( this.item.default.codeTemplates.hasOwnProperty( templateType ) ) {
       return this.item[ 'default' ][ 'codeTemplates' ][ templateType ];
     } else {
-      return "";
+      return {};
     }
   }
 
@@ -113,35 +113,31 @@ export class CodeTemplateComponent implements OnInit {
     return codeText;
   }
 
-  normalizeHostsCommonJS(codeText: string) {
-    if (this.env.BASE_MODULE === 'mempool') {
-      if (['liquid', 'bisq'].includes(this.network)) {
-        codeText = codeText.replace('%{0}', this.network);
-      } else {
-        codeText = codeText.replace('%{0}', 'bitcoin');
-      }
-      if(['', 'main', 'liquid', 'bisq'].includes(this.network)) {
-        codeText = codeText.replace('mempoolJS();', `mempoolJS({
-          hostname: '${document.location.hostname}'
-        });`);
-      } else {
-        codeText = codeText.replace('mempoolJS();', `mempoolJS({
-          hostname: '${document.location.hostname}',
-          network: '${this.network}'
-        });`);
-      }
+  normalizeHostsCommonJS( text: string ) {
+    
+    if( this.network === 'mainnet' || this.network === 'liquid' || this.network === 'bisq' ) {
+      text = text.replace('mempoolJS();', `mempoolJS({
+        hostname: '${document.location.hostname}'
+      });`);
+    } else {
+      text = text.replace('mempoolJS();', `mempoolJS({
+        hostname: '${document.location.hostname}',
+        network: '${this.network}'
+      });`);
     }
 
-    if (this.env.BASE_MODULE === 'bisq') {
-      codeText = codeText.replace('} = mempoolJS();', ` = bisqJS();`);
-      codeText = codeText.replace('{ %{0}: ', '');
+    if( this.network === 'mainnet' || this.network === 'testnet' || this.network === 'signet' ) {
+      return text.replace('%{0}', 'bitcoin');
+    } else {
+      text = text.replace('{ %{0}: ', '');
+      if( this.network === 'liquid' ) {
+        return text.replace('} = mempoolJS();', ` = liquidJS();`);
+      }
+      if( this.network === 'bisq' ) {
+        return text.replace('} = mempoolJS();', ` = bisqJS();`);
+      }
     }
-
-    if (this.env.BASE_MODULE === 'liquid') {
-      codeText = codeText.replace('} = mempoolJS();', ` = liquidJS();`);
-      codeText = codeText.replace('{ %{0}: ', '');
-    }
-    return codeText;
+    
   }
 
   wrapEsModule( response: string ) {
@@ -183,10 +179,13 @@ init();`;
     
   }
 
-  wrapCommonJS(code: any) {
-    let codeText: string;
-    if (code.codeTemplate) {
-      codeText = this.normalizeHostsCommonJS(code.codeTemplate.commonJS);
+  wrapCommonJS( commonJsCodeTemplate: any ) {
+
+    if( commonJsCodeTemplate.options.hasOwnProperty( 'noWrap' ) && commonJsCodeTemplate.options.noWrap ) {
+      return commonJsCodeTemplate.text;
+    }
+    
+    let text = this.normalizeHostsCommonJS( commonJsCodeTemplate.text );
 
       if(this.network === '' || this.network === 'main') {
         codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
@@ -202,10 +201,6 @@ init();`;
       }
       if (this.network === 'bisq') {
         codeText = this.replaceJSPlaceholder(codeText, code.codeSampleBisq.esModule);
-      }
-
-      if (code.noWrap) {
-        return codeText;
       }
 
       let importText = `<script src="https://mempool.space/mempool.js"></script>`;
@@ -239,7 +234,7 @@ init();`;
     ${resultHtml}
   </body>
 </html>`;
-    }
+    
   }
 
   wrapImportTemplate() {
