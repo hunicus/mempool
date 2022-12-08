@@ -131,7 +131,7 @@ export const restApiDocsData = [
     default: {
       description: "Returns details about difficulty adjustment.",
       codeTemplates: {
-        curl: [ "/v1/difficulty-adjustment" ],
+        curl: "/v1/difficulty-adjustment",
         commonJS: {
           text: `
         const { %{0}: { difficulty } } = mempoolJS();
@@ -150,8 +150,10 @@ export const restApiDocsData = [
   console.log(difficultyAdjustment);
           `,
           options: {}
-        }
+        },
+        python: {}
       },
+      parameters: [],
       response: `{
   "progressPercent": 53.323412698412696,
   "difficultyChange": -10.371478953972623,
@@ -165,6 +167,7 @@ export const restApiDocsData = [
 }`
     },
     testnet: {
+      parameters: [],
       response: `{
   "progressPercent": 90.37698412698413,
   "difficultyChange": 27.06899758229495,
@@ -178,6 +181,7 @@ export const restApiDocsData = [
 }`,
     },
     signet: {
+      parameters: [],
       response: `{
   "progressPercent": 2.7777777777777777,
   "difficultyChange": 0,
@@ -199,10 +203,10 @@ export const restApiDocsData = [
     title: "GET Stats",
     showConditions: ["bisq"],
     showCodeExamples: showCodeExamples,
-    default: {
+    bisq: {
       description: "Returns statistics about all Bisq transactions.",
       codeTemplates: {
-        curl: [ "/stats" ],
+        curl: "/stats",
         commonJS: { 
           text: `
         const { %{0}: { statistics } } = mempoolJS();
@@ -223,6 +227,7 @@ export const restApiDocsData = [
           options: {}
         }
       },
+      parameters: [],
       response: `{
         addresses: 213825,
         minted: 6148323.75,

@@ -3,18 +3,18 @@
     <li ngbNavItem *ngIf="item.httpRequestMethod !== 'websocket'" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">cURL</a>
       <ng-template ngbNavContent>
-        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapCurlTemplate(curlCodeTemplate)"></app-clipboard></div>
-        <pre><code [innerText]="wrapCurlTemplate(curlCodeTemplate)"></code></pre>
+        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapCurlTemplate(sampleUrl)"></app-clipboard></div>
+        <pre><code [innerText]="wrapCurlTemplate(sampleUrl)"></code></pre>
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][1]" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">CommonJS</a>
       <ng-template ngbNavContent>
-        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapCommonJS(commonJsCodeTemplate)"></app-clipboard></div>
+        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapCommonJS()"></app-clipboard></div>
         <div class="links">
           <a [href]="npmGithubLink()" target="_blank">GitHub Repo</a>
         </div>
-        <pre><code [innerText]="wrapCommonJS(commonJsCodeTemplate)"></code></pre>
+        <pre><code [innerText]="wrapCommonJS()"></code></pre>
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][2]" role="presentation">
@@ -26,21 +26,21 @@
           <a [href]="npmModuleLink()" target="_blank">NPM Package</a>
         </div>
         <pre><code [innerText]="wrapImportTemplate()"></code></pre>
-        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapEsModule(esModuleCodeTemplate)"></app-clipboard></div>
-        <pre><code [innerText]="wrapEsModule(esModuleCodeTemplate)"></code></pre>
+        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapEsModule()"></app-clipboard></div>
+        <pre><code [innerText]="wrapEsModule()"></code></pre>
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][3]" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">Python</a>
       <ng-template ngbNavContent>
         <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapPythonModule(pythonCodeTemplate)"></app-clipboard></div>
-        <pre><code [innerText]="wrapPythonTemplate(pythonCodeTemplate)"></code></pre>
+        <pre><code [innerText]="wrapPythonTemplate()"></code></pre>
       </ng-template>
     </li>
   </ul>
   <div [ngbNavOutlet]="navCodeTemplate"></div>
   <div *ngIf="responseTemplate" class="response">
-    <div class="subtitle"><ng-container i18n="API Docs API response">Response</ng-container> <app-clipboard [text]="responseTemplate"></app-clipboard></div>
-    <pre><code [innerText]="responseTemplate"></code></pre>
+    <div class="subtitle"><ng-container i18n="API Docs API response">Response</ng-container> <app-clipboard [text]="networkData.response"></app-clipboard></div>
+    <pre><code [innerText]="networkData.response"></code></pre>
   </div>
 </div>

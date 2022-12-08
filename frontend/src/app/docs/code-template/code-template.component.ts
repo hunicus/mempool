@@ -11,46 +11,18 @@ export class CodeTemplateComponent implements OnInit {
   @Input() baseNetworkUrl: string;
   @Input() item: any;
   @Input() sampleUrl: string;
-  curlCodeTemplate: string;
-  commonJsCodeTemplate: any;
-  esModuleCodeTemplate: any;
-  pythonCodeTemplate: any;
-  responseTemplate: string;
   env: Env;
   network: string;
+  networkData: any;
 
   constructor(
     private stateService: StateService,
   ) { }
 
   ngOnInit(): void {
-    this.curlCodeTemplate = this.sampleUrl;
-    this.commonJsCodeTemplate = this.getCodeTemplate( 'commonJS' );
-    this.esModuleCodeTemplate = this.getCodeTemplate( 'esModule' );
-    this.pythonCodeTemplate = this.getCodeTemplate( 'python' );
-    this.responseTemplate = this.getResponseTemplate();
     this.env = this.stateService.env;
-    this.network = ( this.stateService.network === "" ) ? "mainnet" : this.stateService.network;
-  }
-
-  getCodeTemplate( templateType ) {
-    if( this.item.hasOwnProperty( this.stateService.network ) && this.item[ this.stateService.network ].hasOwnProperty( 'codeTemplates' ) &&  this.item[ this.stateService.network ][ 'codeTemplates' ].hasOwnProperty( templateType ) ) {
-      return this.item[ this.stateService.network ][ 'codeTemplates' ][ templateType ];
-    } else if( this.item.default.codeTemplates.hasOwnProperty( templateType ) ) {
-      return this.item[ 'default' ][ 'codeTemplates' ][ templateType ];
-    } else {
-      return {};
-    }
-  }
-
-  getResponseTemplate() {
-    if( this.item.hasOwnProperty( this.stateService.network ) && this.item[ this.stateService.network ].hasOwnProperty( 'response' ) ) {
-      return this.item[ this.stateService.network ][ 'response' ];
-    } else if( this.item.default.hasOwnProperty( 'response' ) ) {
-      return this.item[ 'default' ][ 'response' ];
-    } else {
-      return "";
-    }
+    this.network = ( this.stateService.network === '' ) ? 'mainnet' : this.stateService.network;
+    this.networkData = this.getNetworkData();
   }
 
   adjustContainerHeight( event ) {
@@ -64,56 +36,95 @@ export class CodeTemplateComponent implements OnInit {
     }
   }
 
-  npmGithubLink(){
-    if( this.network === 'bisq' ) {
-      return 'https://github.com/mempool/mempool.js/tree/main/npm-bisq-js';
-    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
-      return 'https://github.com/mempool/mempool.js/tree/main/npm-liquid-js';
-    }
-    return 'https://github.com/mempool/mempool.js';
-  }
-
-  npmModuleLink() {
-    if( this.network === 'bisq' ) {
-      return 'https://www.npmjs.org/package/@mempool/bisq.js';
-    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
-      return 'https://www.npmjs.org/package/@mempool/liquid.js';
-    }
-    return 'https://www.npmjs.org/package/@mempool/mempool.js';
-  }
-
-  normalizeHostsESModule(codeText: string) {
-    if (this.env.BASE_MODULE === 'mempool') {
-      if (['liquid', 'bisq'].includes(this.network)) {
-        codeText = codeText.replace('%{0}', this.network);
+  getNetworkData() {
+    if( this.item.hasOwnProperty( this.network ) ) {
+      let merged = {};
+      merged.description = this.item[ this.network ][ 'description' ] || this.item[ 'default' ][ 'description' ];
+      merged.parameters = this.item[ this.network ][ 'parameters' ] || this.item[ 'default' ][ 'parameters' ];
+      merged.response = this.item[ this.network ][ 'response' ] || this.item[ 'default' ][ 'response' ];
+      if( this.item[ this.network ].hasOwnProperty[ 'codeTemplates' ] ) {
+        merged.codeTemplates.curl = this.item[ this.network ][ 'codeTemplates' ][ 'curl'] || this.item[ 'default' ][ 'codeTemplates' ][ 'curl'] || undefined;
+        merged.codeTemplates.commonJS = this.item[ this.network ][ 'codeTemplates' ][ 'commonJS'] || this.item[ 'default' ][ 'codeTemplates' ][ 'commonJS'] || undefined;
+        merged.codeTemplates.esModule = this.item[ this.network ][ 'codeTemplates' ][ 'esModule'] || this.item[ 'default' ][ 'codeTemplates' ][ 'esModule'] || undefined;
+        merged.codeTemplates.python = this.item[ this.network ][ 'codeTemplates' ][ 'python'] || this.item[ 'default' ][ 'codeTemplates' ][ 'python'] || undefined;
+        return merged;
       } else {
-        codeText = codeText.replace('%{0}', 'bitcoin');
+        merged.codeTemplates = this.item[ 'default' ][ 'codeTemplates' ];
+        return merged;
       }
-      if(['', 'main', 'liquid', 'bisq', 'liquidtestnet'].includes(this.network)) {
-        codeText = codeText.replace('mempoolJS();', `mempoolJS({
-    hostname: '${document.location.hostname}'
-  });`);
-      } else {
-        codeText = codeText.replace('mempoolJS();', `mempoolJS({
-    hostname: '${document.location.hostname}',
-    network: '${this.network}'
-  });`);
-      }
+    } else {
+      return this.item.default;
     }
-
-    if (this.env.BASE_MODULE === 'bisq') {
-      codeText = codeText.replace('} = mempoolJS();', ` = bisqJS();`);
-      codeText = codeText.replace('{ %{0}: ', '');
-    }
-
-    if (this.env.BASE_MODULE === 'liquid') {
-      codeText = codeText.replace('} = mempoolJS();', ` = liquidJS();`);
-      codeText = codeText.replace('{ %{0}: ', '');
-    }
-    return codeText;
   }
 
-  normalizeHostsCommonJS( text: string ) {
+  wrapCurlTemplate( curlUrl: string ) {
+    if( this.item.httpRequestMethod === 'GET' ) {
+      return `curl -sSL ${curlUrl}`;
+    } else {
+      return `curl -X POST -sSLd ${curlUrl}`;
+    }
+  }
+
+  wrapCommonJS() {
+
+    if( this.networkData.codeTemplates.commonJS.options.hasOwnProperty( 'noWrap' ) && this.networkData.codeTemplates.commonJS.options.noWrap ) {
+      return this.networkData.codeTemplates.commonJS.text;
+    }
+    
+    let text = this.normalizeHosts( this.networkData.codeTemplates.commonJS.text );
+
+      /*if(this.network === '' || this.network === 'main') {
+        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
+      }
+      if (this.network === 'testnet') {
+      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleTestnet.esModule);
+      }
+      if (this.network === 'signet') {
+        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleSignet.esModule);
+      }
+      if (this.network === 'liquid' || this.network === 'liquidtestnet') {
+        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleLiquid.esModule);
+      }
+      if (this.network === 'bisq') {
+        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleBisq.esModule);
+      }*/
+
+    let importText = '';
+    if( this.network === 'bisq') {
+      importText = `<script src="https://bisq.markets/bisq.js"></script>`;
+    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
+      importText = `<script src="https://liquid.network/liquid.js"></script>`;
+    } else {
+      importText = `<script src="https://mempool.space/mempool.js"></script>`;
+    }
+
+    let resultHtml = '<pre id="result"></pre>';
+    if (this.item.httpRequestMethod === 'websocket') {
+      resultHtml = `<h2>Blocks</h2><pre id="result-blocks">Waiting for data</pre><br>
+  <h2>Mempool Info</h2><pre id="result-mempool-info">Waiting for data</pre><br>
+  <h2>Transactions</h2><pre id="result-transactions">Waiting for data</pre><br>
+  <h2>Mempool Blocks</h2><pre id="result-mempool-blocks">Waiting for data</pre><br>`;
+    }
+
+    return `<!DOCTYPE html>
+<html>
+<head>
+  ${importText}
+  <script>
+    const init = async () => {
+      ${text}
+    };
+    init();
+  </script>
+</head>
+<body>
+  ${resultHtml}
+</body>
+</html>`;
+    
+  }
+
+  normalizeHosts( text: string ) {
     
     if( this.network === 'mainnet' || this.network === 'liquid' || this.network === 'bisq' ) {
       text = text.replace('mempoolJS();', `mempoolJS({
@@ -140,12 +151,33 @@ export class CodeTemplateComponent implements OnInit {
     
   }
 
-  wrapEsModule( response: string ) {
-    let codeText: string;
-    
-    codeText = this.normalizeHostsESModule(response);
+  wrapImportTemplate() {
+    if( this.network === 'bisq' ) {
+      return `# npm
+npm install @mempool/bisq.js --save
 
-    if(this.network === 'mainnet') {
+# yarn
+yarn add @mempool/bisq.js`;
+    } else if (this.network === 'liquid') {
+      return `# npm
+npm install @mempool/liquid.js --save
+
+# yarn
+yarn add @mempool/liquid.js`;
+    } else {
+      return `# npm
+      npm install @mempool/mempool.js --save
+      
+      # yarn
+      yarn add @mempool/mempool.js`
+    }
+  }
+
+  wrapEsModule() {
+
+    let text = this.normalizeHosts( this.networkData.codeTemplates.esModule.text );
+
+    /*if(this.network === '' || this.network === 'main') {
       codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
     }
     if (this.network === 'testnet') {
@@ -159,121 +191,45 @@ export class CodeTemplateComponent implements OnInit {
     }
     if (this.network === 'bisq') {
       codeText = this.replaceJSPlaceholder(codeText, code.codeSampleBisq.esModule);
-    }
+    }*/
 
-    let importText = `import mempoolJS from "@mempool/mempool.js";`;
-    if (this.env.BASE_MODULE === 'bisq') {
+    let importText = '';
+    if( this.network === 'bisq') {
       importText = `import bisqJS from "@mempool/bisq.js";`;
-    }
-    if (this.env.BASE_MODULE === 'liquid') {
+    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
       importText = `import liquidJS from "@mempool/liquid.js";`;
+    } else {
+      importText = `import mempoolJS from "@mempool/mempool.js";`;
     }
 
     return `${importText}
-
 const init = async () => {
 ${codeText}
 };
-
 init();`;
     
   }
 
-  wrapCommonJS( commonJsCodeTemplate: any ) {
-
-    if( commonJsCodeTemplate.options.hasOwnProperty( 'noWrap' ) && commonJsCodeTemplate.options.noWrap ) {
-      return commonJsCodeTemplate.text;
+  npmGithubLink(){
+    if( this.network === 'bisq' ) {
+      return 'https://github.com/mempool/mempool.js/tree/main/npm-bisq-js';
+    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
+      return 'https://github.com/mempool/mempool.js/tree/main/npm-liquid-js';
     }
-    
-    let text = this.normalizeHostsCommonJS( commonJsCodeTemplate.text );
-
-      if(this.network === '' || this.network === 'main') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
-      }
-      if (this.network === 'testnet') {
-      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleTestnet.esModule);
-      }
-      if (this.network === 'signet') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleSignet.esModule);
-      }
-      if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleLiquid.esModule);
-      }
-      if (this.network === 'bisq') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleBisq.esModule);
-      }
-
-      let importText = `<script src="https://mempool.space/mempool.js"></script>`;
-      if (this.env.BASE_MODULE === 'bisq') {
-        importText = `<script src="https://bisq.markets/bisq.js"></script>`;
-      }
-      if (this.env.BASE_MODULE === 'liquid') {
-        importText = `<script src="https://liquid.network/liquid.js"></script>`;
-      }
-
-      let resultHtml = '<pre id="result"></pre>';
-      if (this.item.httpRequestMethod === 'websocket') {
-        resultHtml = `<h2>Blocks</h2><pre id="result-blocks">Waiting for data</pre><br>
-    <h2>Mempool Info</h2><pre id="result-mempool-info">Waiting for data</pre><br>
-    <h2>Transactions</h2><pre id="result-transactions">Waiting for data</pre><br>
-    <h2>Mempool Blocks</h2><pre id="result-mempool-blocks">Waiting for data</pre><br>`;
-      }
-
-      return `<!DOCTYPE html>
-<html>
-  <head>
-    ${importText}
-    <script>
-      const init = async () => {
-        ${codeText}
-      };
-      init();
-    </script>
-  </head>
-  <body>
-    ${resultHtml}
-  </body>
-</html>`;
-    
+    return 'https://github.com/mempool/mempool.js';
   }
 
-  wrapImportTemplate() {
-
-    let importTemplate = `# npm
-npm install @mempool/mempool.js --save
-
-# yarn
-yarn add @mempool/mempool.js`;
-
-    if (this.env.BASE_MODULE === 'bisq') {
-      importTemplate = `# npm
-npm install @mempool/bisq.js --save
-
-# yarn
-yarn add @mempool/bisq.js`;
+  npmModuleLink() {
+    if( this.network === 'bisq' ) {
+      return 'https://www.npmjs.org/package/@mempool/bisq.js';
+    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
+      return 'https://www.npmjs.org/package/@mempool/liquid.js';
     }
-
-    if (this.env.BASE_MODULE === 'liquid') {
-      importTemplate = `# npm
-npm install @mempool/liquid.js --save
-
-# yarn
-yarn add @mempool/liquid.js`;
-    }
-
-    return importTemplate;
+    return 'https://www.npmjs.org/package/@mempool/mempool.js';
   }
 
-  wrapCurlTemplate( curlUrl: string ) {
-    if( this.item.httpRequestMethod === 'GET' ) {
-      return `curl -sSL ${curlUrl}`;
-    } else {
-      return `curl -X POST -sSLd ${curlUrl}`;
-    }
-  }
-
-  wrapPythonTemplate(code: any) {
-    return ( ( this.network === 'testnet' || this.network === 'signet' ) ? ( code.codeTemplate.python.replace( "wss://mempool.space/api/v1/ws", "wss://mempool.space/" + this.network + "/api/v1/ws" ) ) : code.codeTemplate.python );
+  wrapPythonTemplate() {
+    return ( ( this.network === 'testnet' || this.network === 'signet' ) ? ( this.networkData.codeTemplates.python.replace( "wss://mempool.space/api/v1/ws", "wss://mempool.space/" + this.network + "/api/v1/ws" ) ) : this.networkData.codeTemplates.python );
   }
 
   replaceJSPlaceholder(text: string, code: any) {

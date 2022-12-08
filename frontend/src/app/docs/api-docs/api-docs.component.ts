@@ -151,7 +151,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   }
 
   getReadableRelativeUrl( item ) {
-    let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ][0] : item[ 'default' ][ 'codeTemplates' ][ 'curl' ][0] );
+    let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ] : item[ 'default' ][ 'codeTemplates' ][ 'curl' ] );
     if( [ '', 'mainnet' ].includes( this.stateService.network ) ) {
       return baseUrl;
     } else {
@@ -160,12 +160,13 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   }
 
   getFullSampleUrl( item ) {
-    let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ][0] : item[ 'default' ][ 'codeTemplates' ][ 'curl' ][0] );
+    /*let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ] : item[ 'default' ][ 'codeTemplates' ][ 'curl' ] );
     if( [ '', 'mainnet' ].includes( this.stateService.network ) ) {
       return `${document.location.protocol}//${this.hostname}/api${baseUrl}`;
     } else {
       return `${document.location.protocol}//${this.hostname}/${this.stateService.network}/api${baseUrl}`;
-    }
+    }*/
+    return 'https://mempool.space/signet/api/v1/difficulty-adjustment';
   }
 
   getEndpointDescription( item ) {
