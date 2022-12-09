@@ -33,13 +33,13 @@
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][3]" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">Python</a>
       <ng-template ngbNavContent>
-        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapPythonModule(pythonCodeTemplate)"></app-clipboard></div>
+        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapPythonTemplate()"></app-clipboard></div>
         <pre><code [innerText]="wrapPythonTemplate()"></code></pre>
       </ng-template>
     </li>
   </ul>
   <div [ngbNavOutlet]="navCodeTemplate"></div>
-  <div *ngIf="responseTemplate" class="response">
+  <div class="response">
     <div class="subtitle"><ng-container i18n="API Docs API response">Response</ng-container> <app-clipboard [text]="networkData.response"></app-clipboard></div>
     <pre><code [innerText]="networkData.response"></code></pre>
   </div>

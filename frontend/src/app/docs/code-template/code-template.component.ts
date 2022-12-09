@@ -38,22 +38,22 @@ export class CodeTemplateComponent implements OnInit {
 
   getNetworkData() {
     if( this.item.hasOwnProperty( this.network ) ) {
-      let merged = {};
-      merged.description = this.item[ this.network ][ 'description' ] || this.item[ 'default' ][ 'description' ];
-      merged.parameters = this.item[ this.network ][ 'parameters' ] || this.item[ 'default' ][ 'parameters' ];
-      merged.response = this.item[ this.network ][ 'response' ] || this.item[ 'default' ][ 'response' ];
+      let merged: any = {};
+      merged.description = this.item[ this.network ][ 'description' ] || this.item[ 'mainnet' ][ 'description' ];
+      merged.parameters = this.item[ this.network ][ 'parameters' ] || this.item[ 'mainnet' ][ 'parameters' ];
+      merged.response = this.item[ this.network ][ 'response' ] || this.item[ 'mainnet' ][ 'response' ];
       if( this.item[ this.network ].hasOwnProperty[ 'codeTemplates' ] ) {
-        merged.codeTemplates.curl = this.item[ this.network ][ 'codeTemplates' ][ 'curl'] || this.item[ 'default' ][ 'codeTemplates' ][ 'curl'] || undefined;
-        merged.codeTemplates.commonJS = this.item[ this.network ][ 'codeTemplates' ][ 'commonJS'] || this.item[ 'default' ][ 'codeTemplates' ][ 'commonJS'] || undefined;
-        merged.codeTemplates.esModule = this.item[ this.network ][ 'codeTemplates' ][ 'esModule'] || this.item[ 'default' ][ 'codeTemplates' ][ 'esModule'] || undefined;
-        merged.codeTemplates.python = this.item[ this.network ][ 'codeTemplates' ][ 'python'] || this.item[ 'default' ][ 'codeTemplates' ][ 'python'] || undefined;
+        merged.codeTemplates.curl = this.item[ this.network ][ 'codeTemplates' ][ 'curl'] || this.item[ 'mainnet' ][ 'codeTemplates' ][ 'curl'] || undefined;
+        merged.codeTemplates.commonJS = this.item[ this.network ][ 'codeTemplates' ][ 'commonJS'] || this.item[ 'mainnet' ][ 'codeTemplates' ][ 'commonJS'] || undefined;
+        merged.codeTemplates.esModule = this.item[ this.network ][ 'codeTemplates' ][ 'esModule'] || this.item[ 'mainnet' ][ 'codeTemplates' ][ 'esModule'] || undefined;
+        merged.codeTemplates.python = this.item[ this.network ][ 'codeTemplates' ][ 'python'] || this.item[ 'mainnet' ][ 'codeTemplates' ][ 'python'] || undefined;
         return merged;
       } else {
-        merged.codeTemplates = this.item[ 'default' ][ 'codeTemplates' ];
+        merged.codeTemplates = this.item[ 'mainnet' ][ 'codeTemplates' ];
         return merged;
       }
     } else {
-      return this.item.default;
+      return this.item.mainnet;
     }
   }
 
@@ -204,10 +204,23 @@ yarn add @mempool/liquid.js`;
 
     return `${importText}
 const init = async () => {
-${codeText}
+${text}
 };
 init();`;
     
+  }
+
+  wrapPythonTemplate() {
+    return ( ( this.network === 'testnet' || this.network === 'signet' ) ? ( this.networkData.codeTemplates.python.replace( "wss://mempool.space/api/v1/ws", "wss://mempool.space/" + this.network + "/api/v1/ws" ) ) : this.networkData.codeTemplates.python );
+  }
+
+  replaceJSPlaceholder(text: string, code: any) {
+    for (let index = 0; index < code.length; index++) {
+      const textReplace = code[index];
+      const indexNumber = index + 1;
+      text = text.replace('%{' + indexNumber + '}', textReplace);
+    }
+    return text;
   }
 
   npmGithubLink(){
@@ -226,19 +239,6 @@ init();`;
       return 'https://www.npmjs.org/package/@mempool/liquid.js';
     }
     return 'https://www.npmjs.org/package/@mempool/mempool.js';
-  }
-
-  wrapPythonTemplate() {
-    return ( ( this.network === 'testnet' || this.network === 'signet' ) ? ( this.networkData.codeTemplates.python.replace( "wss://mempool.space/api/v1/ws", "wss://mempool.space/" + this.network + "/api/v1/ws" ) ) : this.networkData.codeTemplates.python );
-  }
-
-  replaceJSPlaceholder(text: string, code: any) {
-    for (let index = 0; index < code.length; index++) {
-      const textReplace = code[index];
-      const indexNumber = index + 1;
-      text = text.replace('%{' + indexNumber + '}', textReplace);
-    }
-    return text;
   }
 
 }

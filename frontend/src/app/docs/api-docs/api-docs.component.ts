@@ -12,16 +12,14 @@ import { FaqTemplateDirective } from '../faq-template/faq-template.component';
   styleUrls: ['./api-docs.component.scss']
 })
 export class ApiDocsComponent implements OnInit, AfterViewInit {
-  plainHostname = document.location.hostname;
-  electrsPort = 0;
-  hostname = document.location.hostname;
-  network$: Observable<string>;
-  active = 0;
+  @Input() whichTab: string;
+  hostname: string = document.location.hostname;
+  electrsPort: number = 0;
+  network: string = '';
   env: Env;
   code: any;
-  baseNetworkUrl = '';
-  @Input() whichTab: string;
-  desktopDocsNavPosition = "relative";
+  baseNetworkUrl: string;
+  desktopDocsNavPosition: string = "relative";
   faq: any[];
   restDocs: any[];
   wsDocs: any;
@@ -59,46 +57,24 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.env = this.stateService.env;
     this.officialMempoolInstance = this.env.OFFICIAL_MEMPOOL_SPACE;
-    this.network$ = merge(of(''), this.stateService.networkChanged$).pipe(
-      tap((network: string) => {
-        if (this.env.BASE_MODULE === 'mempool' && network !== '') {
-          this.baseNetworkUrl = `/${network}`;
-        } else if (this.env.BASE_MODULE === 'liquid') {
-          if (!['', 'liquid'].includes(network)) {
-            this.baseNetworkUrl = `/${network}`;
-          }
-        }
-        return network;
-      })
-    );
-
-    if (document.location.port !== '') {
-      this.hostname = `${this.hostname}:${document.location.port}`;
-    }
-
-    this.hostname = `${document.location.protocol}//${this.hostname}`;
+    this.network = ( this.stateService.network === '' ) ? 'mainnet' : this.stateService.network;
 
     this.faq = faqData;
     this.restDocs = restApiDocsData;
     this.wsDocs = wsApiDocsData;
-
-    this.network$.subscribe((network) => {
-      this.active = (network === 'liquid' || network === 'liquidtestnet') ? 2 : 0;
-      switch( network ) {
-        case "":
-          this.electrsPort = 50002; break;
-        case "mainnet":
-          this.electrsPort = 50002; break;
-        case "testnet":
-          this.electrsPort = 60002; break;
-        case "signet":
-          this.electrsPort = 60602; break;
-        case "liquid":
-          this.electrsPort = 51002; break;
-        case "liquidtestnet":
-          this.electrsPort = 51302; break;
-      }
-    });
+   
+    switch( this.network ) {
+      case "mainnet":
+        this.electrsPort = 50002; break;
+      case "testnet":
+        this.electrsPort = 60002; break;
+      case "signet":
+        this.electrsPort = 60602; break;
+      case "liquid":
+        this.electrsPort = 51002; break;
+      case "liquidtestnet":
+        this.electrsPort = 51302; break;
+    }
   }
 
   ngOnDestroy(): void {
@@ -151,7 +127,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   }
 
   getReadableRelativeUrl( item ) {
-    let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ] : item[ 'default' ][ 'codeTemplates' ][ 'curl' ] );
+    let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ] : item[ 'mainnet' ][ 'codeTemplates' ][ 'curl' ] );
     if( [ '', 'mainnet' ].includes( this.stateService.network ) ) {
       return baseUrl;
     } else {
@@ -160,17 +136,22 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   }
 
   getFullSampleUrl( item ) {
-    /*let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ] : item[ 'default' ][ 'codeTemplates' ][ 'curl' ] );
-    if( [ '', 'mainnet' ].includes( this.stateService.network ) ) {
-      return `${document.location.protocol}//${this.hostname}/api${baseUrl}`;
+    let apiUrl: string = '';
+    try {
+      apiUrl = item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ];
+    } catch(e) {
+      apiUrl = item[ 'mainnet' ][ 'codeTemplates' ][ 'curl' ];
+    }
+    
+    if( this.network === 'mainnet' || this.network === 'liquid' || this.network === 'bisq' ) {
+      return `${document.location.protocol}//${this.hostname}/api${apiUrl}`;
     } else {
-      return `${document.location.protocol}//${this.hostname}/${this.stateService.network}/api${baseUrl}`;
-    }*/
-    return 'https://mempool.space/signet/api/v1/difficulty-adjustment';
+      return `${document.location.protocol}//${this.hostname}/${this.network}/api${apiUrl}`;
+    }
   }
 
   getEndpointDescription( item ) {
-    return ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'description' ] : item[ 'default' ][ 'description' ] );
+    return ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'description' ] : item[ 'mainnet' ][ 'description' ] );
   }
 
   wrapUrl(network: string, code: any, websocket: boolean = false) {
@@ -214,11 +195,11 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     }
 
     if (websocket) {
-      const wsHostname = this.hostname.replace('https://', 'wss://');
+      const wsHostname = document.location.hostname.replace('https://', 'wss://');
       wsHostname.replace('http://', 'ws://');
       return `${wsHostname}${curlNetwork}${text}`;
     }
-    return `${this.hostname}${curlNetwork}${text}`;
+    return `${document.location.hostname}${curlNetwork}${text}`;
   }
 
 }

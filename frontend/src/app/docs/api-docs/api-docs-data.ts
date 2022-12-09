@@ -1,4 +1,4 @@
-const bitcoinNetworks = ["", "testnet", "signet"];
+const bitcoinNetworks = ["mainnet", "testnet", "signet"];
 const liquidNetworks = ["liquid", "liquidtestnet"];
 const miningTimeIntervals = "<code>24h</code>, <code>3d</code>, <code>1w</code>, <code>1m</code>, <code>3m</code>, <code>6m</code>, <code>1y</code>, <code>2y</code>, <code>3y</code>";
 
@@ -20,8 +20,8 @@ function toggleCodeExampleVisibility( changes ) {
   return newShowCodeExamples;
 }
 
-/*export const wsApiDocsData = {
-  showCodeExamples: showCodeExamples,
+export const wsApiDocsData = {
+  /*showCodeExamples: showCodeExamples,
   codeTemplate: {
     curl: `/api/v1/ws`,
     commonJS: `
@@ -109,8 +109,8 @@ if __name__ == "__main__":
   codeSampleTestnet: emptyCodeSample,
   codeSampleSignet: emptyCodeSample,
   codeSampleLiquid: emptyCodeSample,
-  codeSampleBisq: emptyCodeSample,
-};*/
+  codeSampleBisq: emptyCodeSample,*/
+};
 
 export const restApiDocsData = [
   {
@@ -128,7 +128,7 @@ export const restApiDocsData = [
     title: "GET Difficulty Adjustment",
     showConditions: bitcoinNetworks,
     showCodeExamples: showCodeExamples,
-    default: {
+    mainnet: {
       description: "Returns details about difficulty adjustment.",
       codeTemplates: {
         curl: "/v1/difficulty-adjustment",
