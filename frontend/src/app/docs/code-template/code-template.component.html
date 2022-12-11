@@ -40,7 +40,7 @@
   </ul>
   <div [ngbNavOutlet]="navCodeTemplate"></div>
   <div class="response">
-    <div class="subtitle"><ng-container i18n="API Docs API response">Response</ng-container> <app-clipboard [text]="networkData.response"></app-clipboard></div>
-    <pre><code [innerText]="networkData.response"></code></pre>
+    <div class="subtitle"><ng-container i18n="API Docs API response">Response</ng-container> <app-clipboard [text]="item.response"></app-clipboard></div>
+    <pre><code [innerText]="item.response"></code></pre>
   </div>
 </div>

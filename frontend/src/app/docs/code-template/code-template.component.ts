@@ -8,12 +8,10 @@ import { Env, StateService } from '../../services/state.service';
 })
 export class CodeTemplateComponent implements OnInit {
   @Input() hostname: string;
-  @Input() baseNetworkUrl: string;
   @Input() item: any;
   @Input() sampleUrl: string;
   env: Env;
   network: string;
-  networkData: any;
 
   constructor(
     private stateService: StateService,
@@ -22,7 +20,6 @@ export class CodeTemplateComponent implements OnInit {
   ngOnInit(): void {
     this.env = this.stateService.env;
     this.network = ( this.stateService.network === '' ) ? 'mainnet' : this.stateService.network;
-    this.networkData = this.getNetworkData();
   }
 
   adjustContainerHeight( event ) {
@@ -36,42 +33,21 @@ export class CodeTemplateComponent implements OnInit {
     }
   }
 
-  getNetworkData() {
-    if( this.item.hasOwnProperty( this.network ) ) {
-      let merged: any = {};
-      merged.description = this.item[ this.network ][ 'description' ] || this.item[ 'mainnet' ][ 'description' ];
-      merged.parameters = this.item[ this.network ][ 'parameters' ] || this.item[ 'mainnet' ][ 'parameters' ];
-      merged.response = this.item[ this.network ][ 'response' ] || this.item[ 'mainnet' ][ 'response' ];
-      if( this.item[ this.network ].hasOwnProperty[ 'codeTemplates' ] ) {
-        merged.codeTemplates.curl = this.item[ this.network ][ 'codeTemplates' ][ 'curl'] || this.item[ 'mainnet' ][ 'codeTemplates' ][ 'curl'] || undefined;
-        merged.codeTemplates.commonJS = this.item[ this.network ][ 'codeTemplates' ][ 'commonJS'] || this.item[ 'mainnet' ][ 'codeTemplates' ][ 'commonJS'] || undefined;
-        merged.codeTemplates.esModule = this.item[ this.network ][ 'codeTemplates' ][ 'esModule'] || this.item[ 'mainnet' ][ 'codeTemplates' ][ 'esModule'] || undefined;
-        merged.codeTemplates.python = this.item[ this.network ][ 'codeTemplates' ][ 'python'] || this.item[ 'mainnet' ][ 'codeTemplates' ][ 'python'] || undefined;
-        return merged;
-      } else {
-        merged.codeTemplates = this.item[ 'mainnet' ][ 'codeTemplates' ];
-        return merged;
-      }
-    } else {
-      return this.item.mainnet;
-    }
-  }
-
   wrapCurlTemplate( curlUrl: string ) {
     if( this.item.httpRequestMethod === 'GET' ) {
-      return `curl -sSL ${curlUrl}`;
+      return `curl -sSL "${curlUrl}"`;
     } else {
-      return `curl -X POST -sSLd ${curlUrl}`;
+      return `curl -X POST -sSLd "${curlUrl}"`;
     }
   }
 
   wrapCommonJS() {
 
-    if( this.networkData.codeTemplates.commonJS.options.hasOwnProperty( 'noWrap' ) && this.networkData.codeTemplates.commonJS.options.noWrap ) {
-      return this.networkData.codeTemplates.commonJS.text;
+    if( this.item.codeTemplates.commonJS.options.hasOwnProperty( 'noWrap' ) && this.item.codeTemplates.commonJS.options.noWrap ) {
+      return this.item.codeTemplates.commonJS.text;
     }
     
-    let text = this.normalizeHosts( this.networkData.codeTemplates.commonJS.text );
+    let text = this.normalizeHosts( this.item.codeTemplates.commonJS.text, 'commonjs' );
 
       /*if(this.network === '' || this.network === 'main') {
         codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
@@ -107,34 +83,38 @@ export class CodeTemplateComponent implements OnInit {
     }
 
     return `<!DOCTYPE html>
-<html>
-<head>
-  ${importText}
-  <script>
-    const init = async () => {
-      ${text}
-    };
-    init();
-  </script>
-</head>
-<body>
-  ${resultHtml}
-</body>
+  <head>
+    ${importText}
+    <script>
+
+      const init = async () => {
+        ${text}
+      };
+
+      init();
+
+    </script>
+  </head>
+  <body>
+    ${resultHtml}
+  </body>
 </html>`;
     
   }
 
-  normalizeHosts( text: string ) {
+  normalizeHosts( text: string, whichTemplate: string ) {
+
+    const esSpaceAdder = ( whichTemplate === 'esmodule' ) ? '' : ' '.repeat(6);
     
     if( this.network === 'mainnet' || this.network === 'liquid' || this.network === 'bisq' ) {
       text = text.replace('mempoolJS();', `mempoolJS({
-        hostname: '${document.location.hostname}'
-      });`);
+    ${esSpaceAdder}hostname: '${document.location.host}'
+  ${esSpaceAdder}});`);
     } else {
       text = text.replace('mempoolJS();', `mempoolJS({
-        hostname: '${document.location.hostname}',
-        network: '${this.network}'
-      });`);
+    ${esSpaceAdder}hostname: '${document.location.host}',
+    ${esSpaceAdder}network: '${this.network}'
+  ${esSpaceAdder}});`);
     }
 
     if( this.network === 'mainnet' || this.network === 'testnet' || this.network === 'signet' ) {
@@ -166,16 +146,16 @@ npm install @mempool/liquid.js --save
 yarn add @mempool/liquid.js`;
     } else {
       return `# npm
-      npm install @mempool/mempool.js --save
-      
-      # yarn
-      yarn add @mempool/mempool.js`
+npm install @mempool/mempool.js --save
+
+# yarn
+yarn add @mempool/mempool.js`;
     }
   }
 
   wrapEsModule() {
 
-    let text = this.normalizeHosts( this.networkData.codeTemplates.esModule.text );
+    let text = this.normalizeHosts( this.item.codeTemplates.esModule.text, 'esmodule' );
 
     /*if(this.network === '' || this.network === 'main') {
       codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
@@ -203,15 +183,17 @@ yarn add @mempool/liquid.js`;
     }
 
     return `${importText}
+
 const init = async () => {
-${text}
+  ${text}
 };
+
 init();`;
     
   }
 
   wrapPythonTemplate() {
-    return ( ( this.network === 'testnet' || this.network === 'signet' ) ? ( this.networkData.codeTemplates.python.replace( "wss://mempool.space/api/v1/ws", "wss://mempool.space/" + this.network + "/api/v1/ws" ) ) : this.networkData.codeTemplates.python );
+    return ( ( this.network === 'testnet' || this.network === 'signet' ) ? ( this.item.codeTemplates.python.replace( "wss://mempool.space/api/v1/ws", "wss://mempool.space/" + this.network + "/api/v1/ws" ) ) : this.item.codeTemplates.python );
   }
 
   replaceJSPlaceholder(text: string, code: any) {

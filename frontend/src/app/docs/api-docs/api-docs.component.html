@@ -47,17 +47,17 @@
               <div class="endpoint">
                 <div class="subtitle" i18n="Api docs endpoint">Endpoint</div>
                 <div *ngIf="item.httpRequestMethod === 'GET'">
-                  <a [href]="getFullSampleUrl( item )" target="_blank" rel="nofollow">{{ item.httpRequestMethod }} {{ baseNetworkUrl }}/api{{ getReadableRelativeUrl( item ) }}</a>
+                  <a [href]="getSampleUrl( item, false )" target="_blank" rel="nofollow">{{ item.httpRequestMethod }} {{ getSampleUrl( item, true ) }}</a>
                 </div>
                 <div *ngIf="item.httpRequestMethod === 'POST'">
-                  {{ item.httpRequestMethod }} /api{{ getReadableRelativeUrl( item ) }}
+                  {{ item.httpRequestMethod }} /api{{ getSampleUrl( item, true ) }}
                 </div>
               </div>
               <div class="description">
                 <div class="subtitle" i18n>Description</div>
                 <div [innerHTML]="getEndpointDescription( item )" i18n></div>
               </div>
-              <app-code-template [hostname]="hostname" [baseNetworkUrl]="baseNetworkUrl" [item]="item" [sampleUrl]="getFullSampleUrl( item )"></app-code-template>
+              <app-code-template [hostname]="hostname" [item]="getMergedItem( item )" [sampleUrl]="getSampleUrl( item, false )"></app-code-template>
             </div>
           </div>
         </div>

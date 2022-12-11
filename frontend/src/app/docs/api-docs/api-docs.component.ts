@@ -18,7 +18,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   network: string = '';
   env: Env;
   code: any;
-  baseNetworkUrl: string;
   desktopDocsNavPosition: string = "relative";
   faq: any[];
   restDocs: any[];
@@ -126,32 +125,20 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getReadableRelativeUrl( item ) {
-    let baseUrl = ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ] : item[ 'mainnet' ][ 'codeTemplates' ][ 'curl' ] );
-    if( [ '', 'mainnet' ].includes( this.stateService.network ) ) {
-      return baseUrl;
-    } else {
-      return "/" + this.stateService.network + baseUrl;
-    }
-  }
-
-  getFullSampleUrl( item ) {
-    let apiUrl: string = '';
-    try {
-      apiUrl = item[ this.stateService.network ][ 'codeTemplates' ][ 'curl' ];
-    } catch(e) {
-      apiUrl = item[ 'mainnet' ][ 'codeTemplates' ][ 'curl' ];
-    }
+  getSampleUrl( item, forDisplay ) {
+    const mergedItem = this.getMergedItem( item );
+    const apiUrl = mergedItem[ 'codeTemplates' ][ 'curl' ];
     
     if( this.network === 'mainnet' || this.network === 'liquid' || this.network === 'bisq' ) {
-      return `${document.location.protocol}//${this.hostname}/api${apiUrl}`;
+      return ( forDisplay ? `/api${apiUrl}` : `${document.location.protocol}//${document.location.host}/api${apiUrl}` );
     } else {
-      return `${document.location.protocol}//${this.hostname}/${this.network}/api${apiUrl}`;
+      return ( forDisplay ? `/${this.network}/api${apiUrl}` : `${document.location.protocol}//${document.location.host}/${this.network}/api${apiUrl}` );
     }
   }
 
   getEndpointDescription( item ) {
-    return ( item.hasOwnProperty( this.stateService.network ) ? item[ this.stateService.network ][ 'description' ] : item[ 'mainnet' ][ 'description' ] );
+    const mergedItem = this.getMergedItem( item );
+    return mergedItem.description;
   }
 
   wrapUrl(network: string, code: any, websocket: boolean = false) {
@@ -200,6 +187,28 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
       return `${wsHostname}${curlNetwork}${text}`;
     }
     return `${document.location.hostname}${curlNetwork}${text}`;
+  }
+
+  getMergedItem( item: any ) {
+    let merged: any = {};
+    merged = item;
+    if( item.hasOwnProperty( this.network ) ) {
+      merged.description = item[ this.network ][ 'description' ] || item[ 'mainnet' ][ 'description' ];
+      merged.parameters = item[ this.network ][ 'parameters' ] || item[ 'mainnet' ][ 'parameters' ];
+      merged.response = item[ this.network ][ 'response' ] || item[ 'mainnet' ][ 'response' ];
+      if( item[ this.network ].hasOwnProperty[ 'codeTemplates' ] ) {
+        merged.codeTemplates.curl = item[ this.network ][ 'codeTemplates' ][ 'curl'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'curl'] || undefined;
+        merged.codeTemplates.commonJS = item[ this.network ][ 'codeTemplates' ][ 'commonJS'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'commonJS'] || undefined;
+        merged.codeTemplates.esModule = item[ this.network ][ 'codeTemplates' ][ 'esModule'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'esModule'] || undefined;
+        merged.codeTemplates.python = item[ this.network ][ 'codeTemplates' ][ 'python'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'python'] || undefined;
+        return merged;
+      } else {
+        merged.codeTemplates = item[ 'mainnet' ][ 'codeTemplates' ];
+        return merged;
+      }
+    } else {
+      return item.mainnet;
+    }
   }
 
 }
