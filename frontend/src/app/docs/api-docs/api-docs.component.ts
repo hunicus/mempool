@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { ActivatedRoute } from "@angular/router";
 import { faqData, restApiDocsData, wsApiDocsData } from './api-docs-data';
 import { FaqTemplateDirective } from '../faq-template/faq-template.component';
+import { PassThrough } from 'stream';
 
 @Component({
   selector: 'app-api-docs',
@@ -24,6 +25,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   wsDocs: any;
   screenWidth: number;
   officialMempoolInstance: boolean;
+  networks: string[] = ["mainnet", "testnet", "signet", "liquid", "liquidtestnet", "bisq"];
 
   @ViewChildren(FaqTemplateDirective) faqTemplates: QueryList<FaqTemplateDirective>;
   dict = {};
@@ -141,38 +143,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     return mergedItem.description;
   }
 
-  wrapUrl(network: string, code: any, websocket: boolean = false) {
-
-    let curlResponse = [];
-    if (['', 'mainnet'].includes(network)){
-      curlResponse = code.codeSampleMainnet.curl;
-    }
-    if (network === 'testnet') {
-      curlResponse = code.codeSampleTestnet.curl;
-    }
-    if (network === 'signet') {
-      curlResponse = code.codeSampleSignet.curl;
-    }
-    if (network === 'liquid') {
-      curlResponse = code.codeSampleLiquid.curl;
-    }
-    if (network === 'liquidtestnet') {
-      curlResponse = code.codeSampleLiquidTestnet.curl;
-    }
-    if (network === 'bisq') {
-      curlResponse = code.codeSampleBisq.curl;
-    }
-
-    let curlNetwork = '';
-    if (this.env.BASE_MODULE === 'mempool') {
-      if (!['', 'mainnet'].includes(network)) {
-        curlNetwork = `/${network}`;
-      }
-    } else if (this.env.BASE_MODULE === 'liquid') {
-      if (!['', 'liquid'].includes(network)) {
-        curlNetwork = `/${network}`;
-      }
-    }
+  /*wrapUrl(network: string, code: any, websocket: boolean = false) {
 
     let text = code.codeTemplate.curl;
     for (let index = 0; index < curlResponse.length; index++) {
@@ -187,11 +158,13 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
       return `${wsHostname}${curlNetwork}${text}`;
     }
     return `${document.location.hostname}${curlNetwork}${text}`;
-  }
+  }*/
 
+  //enables selective overriding for network-specific attributes
   getMergedItem( item: any ) {
     let merged: any = {};
-    merged = item;
+    Object.assign( merged, item );
+    this.networks.forEach( n => delete merged[n] );
     if( item.hasOwnProperty( this.network ) ) {
       merged.description = item[ this.network ][ 'description' ] || item[ 'mainnet' ][ 'description' ];
       merged.parameters = item[ this.network ][ 'parameters' ] || item[ 'mainnet' ][ 'parameters' ];
@@ -207,7 +180,11 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
         return merged;
       }
     } else {
-      return item.mainnet;
+      merged.description = item[ 'mainnet' ][ 'description' ];
+      merged.parameters = item[ 'mainnet' ][ 'parameters' ];
+      merged.response = item[ 'mainnet' ][ 'response' ];
+      merged.codeTemplates = item[ 'mainnet' ][ 'codeTemplates'];
+      return merged;
     }
   }
 

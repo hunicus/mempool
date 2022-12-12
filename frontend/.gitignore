@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 server.run.js
+api-docs-data.js
 
 # Only exists if Bazel was run
 /bazel-out
