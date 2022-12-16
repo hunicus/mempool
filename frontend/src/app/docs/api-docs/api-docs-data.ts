@@ -24,7 +24,7 @@ export const wsApiDocsData = {
   /*showCodeExamples: showCodeExamples,
   codeTemplate: {
     curl: `/api/v1/ws`,
-    commonJS: `
+    commonjs: `
         const { %{0}: { websocket } } = mempoolJS();
 
         const ws = websocket.initClient({
@@ -47,7 +47,7 @@ export const wsApiDocsData = {
           }
         });
   `,
-    esModule: `
+    esmodule: `
   const { %{0}: { websocket } } = mempoolJS();
 
   const ws = websocket.initServer({
@@ -132,7 +132,7 @@ export const restApiDocsData = [
       description: "Returns details about difficulty adjustment.",
       codeTemplates: {
         curl: "/v1/difficulty-adjustment",
-        commonJS: {
+        commonjs: {
           text: `
         const { %{0}: { difficulty } } = mempoolJS();
 
@@ -142,7 +142,7 @@ export const restApiDocsData = [
           `,
           options: {}
         },
-        esModule: {
+        esmodule: {
           text: `
   const { %{0}: { difficulty } } = mempoolJS();
 
@@ -207,7 +207,7 @@ export const restApiDocsData = [
       description: "Returns statistics about all Bisq transactions.",
       codeTemplates: {
         curl: "/stats",
-        commonJS: { 
+        commonjs: { 
           text: `
         const { %{0}: { statistics } } = mempoolJS();
 
@@ -217,7 +217,7 @@ export const restApiDocsData = [
           `,
           options: {}
         },
-        esModule: {
+        esmodule: {
           text: `
   const { %{0}: { statistics } } = mempoolJS();
 
@@ -229,12 +229,12 @@ export const restApiDocsData = [
       },
       parameters: [],
       response: `{
-        addresses: 213825,
-        minted: 6148323.75,
-        burnt: 1830262.66,
-        spent_txos: 215705,
-        unspent_txos: 2572
-      }`
+  addresses: 213825,
+  minted: 6148323.75,
+  burnt: 1830262.66,
+  spent_txos: 215705,
+  unspent_txos: 2572
+}`
     }
   }
 ];

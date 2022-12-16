@@ -57,7 +57,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.env = this.stateService.env;
-    this.officialMempoolInstance = this.env.OFFICIAL_MEMPOOL_SPACE;
     this.network = ( this.stateService.network === '' ) ? 'mainnet' : this.stateService.network;
 
     this.faq = faqData;
@@ -169,14 +168,25 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
       merged.description = item[ this.network ][ 'description' ] || item[ 'mainnet' ][ 'description' ];
       merged.parameters = item[ this.network ][ 'parameters' ] || item[ 'mainnet' ][ 'parameters' ];
       merged.response = item[ this.network ][ 'response' ] || item[ 'mainnet' ][ 'response' ];
-      if( item[ this.network ].hasOwnProperty[ 'codeTemplates' ] ) {
-        merged.codeTemplates.curl = item[ this.network ][ 'codeTemplates' ][ 'curl'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'curl'] || undefined;
-        merged.codeTemplates.commonJS = item[ this.network ][ 'codeTemplates' ][ 'commonJS'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'commonJS'] || undefined;
-        merged.codeTemplates.esModule = item[ this.network ][ 'codeTemplates' ][ 'esModule'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'esModule'] || undefined;
-        merged.codeTemplates.python = item[ this.network ][ 'codeTemplates' ][ 'python'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'python'] || undefined;
+      if( item[ this.network ].hasOwnProperty( 'codeTemplates' ) ) {
+        merged.codeTemplates = {};
+        if( item.showCodeExamples[this.network][0] ) {
+          merged.codeTemplates.curl = item[ this.network ][ 'codeTemplates' ][ 'curl'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'curl'];
+        }
+        if( item.showCodeExamples[this.network][1] ) {
+          merged.codeTemplates.commonjs = item[ this.network ][ 'codeTemplates' ][ 'commonjs'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'commonjs'];
+        }
+        if( item.showCodeExamples[this.network][2] ) {
+          merged.codeTemplates.esmodule = item[ this.network ][ 'codeTemplates' ][ 'esmodule'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'esmodule'];
+        }
+        if( item.showCodeExamples[this.network][3] ) {
+          merged.codeTemplates.python = item[ this.network ][ 'codeTemplates' ][ 'python'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'python'];
+        }
+        merged.codeTemplates = this.processParameters(merged);
         return merged;
       } else {
         merged.codeTemplates = item[ 'mainnet' ][ 'codeTemplates' ];
+        merged.codeTemplates = this.processParameters(merged);
         return merged;
       }
     } else {
@@ -184,9 +194,26 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
       merged.parameters = item[ 'mainnet' ][ 'parameters' ];
       merged.response = item[ 'mainnet' ][ 'response' ];
       merged.codeTemplates = item[ 'mainnet' ][ 'codeTemplates'];
+      merged.codeTemplates = this.processParameters(merged);
       return merged;
     }
   }
 
-}
+  processParameters( merged: any ) {
+    const codeTemplateTypes = [ 'curl', 'commonjs', 'esmodule', 'python' ];
+    for( let c of codeTemplateTypes ) {
+      if( merged.codeTemplates.hasOwnProperty(c) && merged.parameters.length > 0 ) {
+        merged.codeTemplates[c] = this.insertParameters( merged.codeTemplates[c], merged.parameters );
+      }
+    }
+    return merged;
+  }
 
+  insertParameters( template, parameters ) {
+    for( let i = 0; i < parameters.length; i++ ) {
+      template = template.replace( '%{' + (i+1) + '}', parameters[i] );
+    }
+    return template;
+  }
+
+}

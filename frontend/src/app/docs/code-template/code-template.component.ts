@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Env, StateService } from '../../services/state.service';
+import { StateService } from '../../services/state.service';
 
 @Component({
   selector: 'app-code-template',
@@ -10,7 +10,6 @@ export class CodeTemplateComponent implements OnInit {
   @Input() hostname: string;
   @Input() item: any;
   @Input() sampleUrl: string;
-  env: Env;
   network: string;
 
   constructor(
@@ -18,7 +17,6 @@ export class CodeTemplateComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.env = this.stateService.env;
     this.network = ( this.stateService.network === '' ) ? 'mainnet' : this.stateService.network;
   }
 
@@ -42,28 +40,12 @@ export class CodeTemplateComponent implements OnInit {
   }
 
   wrapCommonJS() {
-
-    if( this.item.codeTemplates.commonJS.options.hasOwnProperty( 'noWrap' ) && this.item.codeTemplates.commonJS.options.noWrap ) {
-      return this.item.codeTemplates.commonJS.text;
+    
+    if( this.item.codeTemplates.commonjs.options.hasOwnProperty( 'noWrap' ) && this.item.codeTemplates.commonjs.options.noWrap ) {
+      return this.item.codeTemplates.commonjs.text;
     }
     
-    let text = this.normalizeHosts( this.item.codeTemplates.commonJS.text, 'commonjs' );
-
-      /*if(this.network === '' || this.network === 'main') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
-      }
-      if (this.network === 'testnet') {
-      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleTestnet.esModule);
-      }
-      if (this.network === 'signet') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleSignet.esModule);
-      }
-      if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleLiquid.esModule);
-      }
-      if (this.network === 'bisq') {
-        codeText = this.replaceJSPlaceholder(codeText, code.codeSampleBisq.esModule);
-      }*/
+    let text = this.normalizeHosts( this.item.codeTemplates.commonjs.text, 'commonjs' );
 
     let importText = '';
     if( this.network === 'bisq') {
@@ -75,7 +57,7 @@ export class CodeTemplateComponent implements OnInit {
     }
 
     let resultHtml = '<pre id="result"></pre>';
-    if (this.item.httpRequestMethod === 'websocket') {
+    if( this.item.httpRequestMethod === 'websocket' ) {
       resultHtml = `<h2>Blocks</h2><pre id="result-blocks">Waiting for data</pre><br>
   <h2>Mempool Info</h2><pre id="result-mempool-info">Waiting for data</pre><br>
   <h2>Transactions</h2><pre id="result-transactions">Waiting for data</pre><br>
@@ -122,10 +104,10 @@ export class CodeTemplateComponent implements OnInit {
     } else {
       text = text.replace('{ %{0}: ', '');
       if( this.network === 'liquid' ) {
-        return text.replace('} = mempoolJS();', ` = liquidJS();`);
+        return text.replace('} = mempoolJS({', ` = liquidJS({`);
       }
       if( this.network === 'bisq' ) {
-        return text.replace('} = mempoolJS();', ` = bisqJS();`);
+        return text.replace('} = mempoolJS({', ` = bisqJS({`);
       }
     }
     
@@ -138,7 +120,7 @@ npm install @mempool/bisq.js --save
 
 # yarn
 yarn add @mempool/bisq.js`;
-    } else if (this.network === 'liquid') {
+    } else if( this.network === 'liquid' ) {
       return `# npm
 npm install @mempool/liquid.js --save
 
@@ -155,28 +137,12 @@ yarn add @mempool/mempool.js`;
 
   wrapEsModule() {
 
-    let text = this.normalizeHosts( this.item.codeTemplates.esModule.text, 'esmodule' );
-
-    /*if(this.network === '' || this.network === 'main') {
-      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleMainnet.esModule);
-    }
-    if (this.network === 'testnet') {
-    codeText = this.replaceJSPlaceholder(codeText, code.codeSampleTestnet.esModule);
-    }
-    if (this.network === 'signet') {
-      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleSignet.esModule);
-    }
-    if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleLiquid.esModule);
-    }
-    if (this.network === 'bisq') {
-      codeText = this.replaceJSPlaceholder(codeText, code.codeSampleBisq.esModule);
-    }*/
+    let text = this.normalizeHosts( this.item.codeTemplates.esmodule.text, 'esmodule' );
 
     let importText = '';
     if( this.network === 'bisq') {
       importText = `import bisqJS from "@mempool/bisq.js";`;
-    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
+    } else if( this.network === 'liquid' ) {
       importText = `import liquidJS from "@mempool/liquid.js";`;
     } else {
       importText = `import mempoolJS from "@mempool/mempool.js";`;
@@ -194,15 +160,6 @@ init();`;
 
   wrapPythonTemplate() {
     return ( ( this.network === 'testnet' || this.network === 'signet' ) ? ( this.item.codeTemplates.python.replace( "wss://mempool.space/api/v1/ws", "wss://mempool.space/" + this.network + "/api/v1/ws" ) ) : this.item.codeTemplates.python );
-  }
-
-  replaceJSPlaceholder(text: string, code: any) {
-    for (let index = 0; index < code.length; index++) {
-      const textReplace = code[index];
-      const indexNumber = index + 1;
-      text = text.replace('%{' + indexNumber + '}', textReplace);
-    }
-    return text;
   }
 
   npmGithubLink(){
