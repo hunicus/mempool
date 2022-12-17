@@ -128,12 +128,10 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
 
   getSampleUrl( item, forDisplay ) {
     const mergedItem = this.getMergedItem( item );
-    const apiUrl = mergedItem[ 'codeTemplates' ][ 'curl' ];
-    
     if( this.network === 'mainnet' || this.network === 'liquid' || this.network === 'bisq' ) {
-      return ( forDisplay ? `/api${apiUrl}` : `${document.location.protocol}//${document.location.host}/api${apiUrl}` );
+      return ( forDisplay ? `/api${mergedItem.codeTemplates.curl.textDisplay}` : `${document.location.protocol}//${document.location.host}/api${mergedItem.codeTemplates.curl.text}` );
     } else {
-      return ( forDisplay ? `/${this.network}/api${apiUrl}` : `${document.location.protocol}//${document.location.host}/${this.network}/api${apiUrl}` );
+      return ( forDisplay ? `/${this.network}/api${mergedItem.codeTemplates.curl.textDisplay}` : `${document.location.protocol}//${document.location.host}/${this.network}/api${mergedItem.codeTemplates.curl.text}` );
     }
   }
 
@@ -165,55 +163,39 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     Object.assign( merged, item );
     this.networks.forEach( n => delete merged[n] );
     if( item.hasOwnProperty( this.network ) ) {
-      merged.description = item[ this.network ][ 'description' ] || item[ 'mainnet' ][ 'description' ];
-      merged.parameters = item[ this.network ][ 'parameters' ] || item[ 'mainnet' ][ 'parameters' ];
-      merged.response = item[ this.network ][ 'response' ] || item[ 'mainnet' ][ 'response' ];
-      if( item[ this.network ].hasOwnProperty( 'codeTemplates' ) ) {
-        merged.codeTemplates = {};
-        if( item.showCodeExamples[this.network][0] ) {
-          merged.codeTemplates.curl = item[ this.network ][ 'codeTemplates' ][ 'curl'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'curl'];
+      for( let k1 in item[ this.network ] ) {
+        if( item[ this.network ].hasOwnProperty(k1) ) {
+          if( k1 == 'codeTemplates' ) {
+            for( let k2 in item[ this.network ]['codeTemplates'] ) {
+              merged['codeTemplates'][k2] = item[ this.network ][k1][k2];  
+            }
+          } else {
+            merged[k1] = item[ this.network ][k1];
+          }
         }
-        if( item.showCodeExamples[this.network][1] ) {
-          merged.codeTemplates.commonjs = item[ this.network ][ 'codeTemplates' ][ 'commonjs'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'commonjs'];
-        }
-        if( item.showCodeExamples[this.network][2] ) {
-          merged.codeTemplates.esmodule = item[ this.network ][ 'codeTemplates' ][ 'esmodule'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'esmodule'];
-        }
-        if( item.showCodeExamples[this.network][3] ) {
-          merged.codeTemplates.python = item[ this.network ][ 'codeTemplates' ][ 'python'] || item[ 'mainnet' ][ 'codeTemplates' ][ 'python'];
-        }
-        merged.codeTemplates = this.processParameters(merged);
-        return merged;
-      } else {
-        merged.codeTemplates = item[ 'mainnet' ][ 'codeTemplates' ];
-        merged.codeTemplates = this.processParameters(merged);
-        return merged;
-      }
-    } else {
-      merged.description = item[ 'mainnet' ][ 'description' ];
-      merged.parameters = item[ 'mainnet' ][ 'parameters' ];
-      merged.response = item[ 'mainnet' ][ 'response' ];
-      merged.codeTemplates = item[ 'mainnet' ][ 'codeTemplates'];
-      merged.codeTemplates = this.processParameters(merged);
-      return merged;
-    }
-  }
-
-  processParameters( merged: any ) {
-    const codeTemplateTypes = [ 'curl', 'commonjs', 'esmodule', 'python' ];
-    for( let c of codeTemplateTypes ) {
-      if( merged.codeTemplates.hasOwnProperty(c) && merged.parameters.length > 0 ) {
-        merged.codeTemplates[c] = this.insertParameters( merged.codeTemplates[c], merged.parameters );
       }
     }
+    merged.codeTemplates = this.processParameters( merged );
     return merged;
   }
 
-  insertParameters( template, parameters ) {
-    for( let i = 0; i < parameters.length; i++ ) {
-      template = template.replace( '%{' + (i+1) + '}', parameters[i] );
+  processParameters( merged: any ) {
+    for( let k in merged.codeTemplates ) {
+      if( merged['codeTemplates'][k].hasOwnProperty('template') ) {
+        if( k === 'curl' ) {
+          merged.codeTemplates[k]['textDisplay'] = ( merged.parameters.labels.length > 0 ? this.insertParameters( merged.codeTemplates[k]['template'], merged.parameters.labels, true ) : merged.codeTemplates[k].template );
+        }
+        merged.codeTemplates[k]['text'] = ( merged.parameters.exampleValues.length > 0 ? this.insertParameters( merged.codeTemplates[k]['template'], merged.parameters.exampleValues, false ) : merged.codeTemplates[k].template );
+      }
     }
-    return template;
+    return merged.codeTemplates;
+  }
+
+  insertParameters( templateText, parameters, isDisplay ) {
+    for( let i = 0; i < parameters.length; i++ ) {
+      templateText = templateText.replace( '%{' + (i+1) + '}', ( isDisplay ? ":" : "" ) + parameters[i] );
+    }
+    return templateText;
   }
 
 }
