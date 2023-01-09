@@ -57,7 +57,7 @@
                 <div class="subtitle" i18n>Description</div>
                 <div [innerHTML]="getEndpointDescription( item )" i18n></div>
               </div>
-              <app-code-template [hostname]="hostname" [item]="getMergedItem( item )" [sampleUrl]="getSampleUrl( item, false )"></app-code-template>
+              <app-code-template [hostname]="hostname" [item]="item" [sampleUrl]="getSampleUrl( item, false )"></app-code-template>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { StateService } from '../../services/state.service';
+import { restApiDocsCode } from '../api-docs/api-docs-code';
 
 @Component({
   selector: 'app-code-template',
@@ -11,6 +12,7 @@ export class CodeTemplateComponent implements OnInit {
   @Input() item: any;
   @Input() sampleUrl: string;
   network: string;
+  restDocsCode: any;
 
   constructor(
     private stateService: StateService,
@@ -18,6 +20,7 @@ export class CodeTemplateComponent implements OnInit {
 
   ngOnInit(): void {
     this.network = ( this.stateService.network === '' ) ? 'mainnet' : this.stateService.network;
+    this.restDocsCode = restApiDocsCode;
   }
 
   adjustContainerHeight( event ) {
@@ -39,123 +42,22 @@ export class CodeTemplateComponent implements OnInit {
     }
   }
 
-  wrapCommonJS() {
-    
-    if( this.item.codeTemplates.commonjs.options.hasOwnProperty( 'noWrap' ) && this.item.codeTemplates.commonjs.options.noWrap ) {
-      return this.item.codeTemplates.commonjs.text;
-    }
-    
-    let text = this.normalizeHosts( this.item.codeTemplates.commonjs.text, 'commonjs' );
-
-    let importText = '';
-    if( this.network === 'bisq') {
-      importText = `<script src="https://bisq.markets/bisq.js"></script>`;
-    } else if( this.network === 'liquid' || this.network === 'liquidtestnet' ) {
-      importText = `<script src="https://liquid.network/liquid.js"></script>`;
-    } else {
-      importText = `<script src="https://mempool.space/mempool.js"></script>`;
-    }
-
-    let resultHtml = '<pre id="result"></pre>';
-    if( this.item.httpRequestMethod === 'websocket' ) {
-      resultHtml = `<h2>Blocks</h2><pre id="result-blocks">Waiting for data</pre><br>
-  <h2>Mempool Info</h2><pre id="result-mempool-info">Waiting for data</pre><br>
-  <h2>Transactions</h2><pre id="result-transactions">Waiting for data</pre><br>
-  <h2>Mempool Blocks</h2><pre id="result-mempool-blocks">Waiting for data</pre><br>`;
-    }
-
-    return `<!DOCTYPE html>
-  <head>
-    ${importText}
-    <script>
-
-      const init = async () => {
-        ${text}
-      };
-
-      init();
-
-    </script>
-  </head>
-  <body>
-    ${resultHtml}
-  </body>
-</html>`;
-    
+  getCommonJs() {
+    return this.restDocsCode[this.item.fragment][this.network]['commonjs'].replace('DOCUMENT_LOCATION_HOST',document.location.host).replace('CURRENT_NETWORK',this.network);
   }
 
-  normalizeHosts( text: string, whichTemplate: string ) {
-
-    const esSpaceAdder = ( whichTemplate === 'esmodule' ) ? '' : ' '.repeat(6);
-    
-    if( this.network === 'mainnet' || this.network === 'liquid' || this.network === 'bisq' ) {
-      text = text.replace('mempoolJS();', `mempoolJS({
-    ${esSpaceAdder}hostname: '${document.location.host}'
-  ${esSpaceAdder}});`);
-    } else {
-      text = text.replace('mempoolJS();', `mempoolJS({
-    ${esSpaceAdder}hostname: '${document.location.host}',
-    ${esSpaceAdder}network: '${this.network}'
-  ${esSpaceAdder}});`);
-    }
-
-    if( this.network === 'mainnet' || this.network === 'testnet' || this.network === 'signet' ) {
-      return text.replace('%{0}', 'bitcoin');
-    } else {
-      text = text.replace('{ %{0}: ', '');
-      if( this.network === 'liquid' ) {
-        return text.replace('} = mempoolJS({', ` = liquidJS({`);
-      }
-      if( this.network === 'bisq' ) {
-        return text.replace('} = mempoolJS({', ` = bisqJS({`);
-      }
-    }
-    
+  getEsModule() {
+    return this.restDocsCode[this.item.fragment][this.network]['esmodule'].replace('DOCUMENT_LOCATION_HOST',document.location.host).replace('CURRENT_NETWORK',this.network);
   }
 
   wrapImportTemplate() {
     if( this.network === 'bisq' ) {
-      return `# npm
-npm install @mempool/bisq.js --save
-
-# yarn
-yarn add @mempool/bisq.js`;
+      return `# npm\nnpm install @mempool/bisq.js --save\n\n# yarn\nyarn add @mempool/bisq.js`;
     } else if( this.network === 'liquid' ) {
-      return `# npm
-npm install @mempool/liquid.js --save
-
-# yarn
-yarn add @mempool/liquid.js`;
+      return `# npm\nnpm install @mempool/liquid.js --save\n\n# yarn\nyarn add @mempool/liquid.js`;
     } else {
-      return `# npm
-npm install @mempool/mempool.js --save
-
-# yarn
-yarn add @mempool/mempool.js`;
+      return `# npm\nnpm install @mempool/mempool.js --save\n\n# yarn\nyarn add @mempool/mempool.js`;
     }
-  }
-
-  wrapEsModule() {
-
-    let text = this.normalizeHosts( this.item.codeTemplates.esmodule.text, 'esmodule' );
-
-    let importText = '';
-    if( this.network === 'bisq') {
-      importText = `import bisqJS from "@mempool/bisq.js";`;
-    } else if( this.network === 'liquid' ) {
-      importText = `import liquidJS from "@mempool/liquid.js";`;
-    } else {
-      importText = `import mempoolJS from "@mempool/mempool.js";`;
-    }
-
-    return `${importText}
-
-const init = async () => {
-  ${text}
-};
-
-init();`;
-    
   }
 
   wrapPythonTemplate() {

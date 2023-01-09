@@ -13,7 +13,6 @@ import { SeoService } from './services/seo.service';
 import { OpenGraphService } from './services/opengraph.service';
 import { SharedModule } from './shared/shared.module';
 import { StorageService } from './services/storage.service';
-import { DocService } from './services/doc.service';
 import { HttpCacheInterceptor } from './services/http-cache.interceptor';
 import { LanguageService } from './services/language.service';
 import { FiatShortenerPipe } from './shared/pipes/fiat-shortener.pipe';
@@ -29,7 +28,6 @@ const providers = [
   SeoService,
   OpenGraphService,
   StorageService,
-  DocService,
   EnterpriseService,
   LanguageService,
   ShortenStringPipe,

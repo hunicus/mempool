@@ -1,11 +1,9 @@
 import { Component, OnInit, Input, QueryList, AfterViewInit, ViewChildren } from '@angular/core';
 import { Env, StateService } from '../../services/state.service';
-import { Observable, merge, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { ActivatedRoute } from "@angular/router";
 import { faqData, restApiDocsData, wsApiDocsData } from './api-docs-data';
+import { restApiDocsCode } from './api-docs-code';
 import { FaqTemplateDirective } from '../faq-template/faq-template.component';
-import { PassThrough } from 'stream';
 
 @Component({
   selector: 'app-api-docs',
@@ -14,14 +12,15 @@ import { PassThrough } from 'stream';
 })
 export class ApiDocsComponent implements OnInit, AfterViewInit {
   @Input() whichTab: string;
+  env: any;
   hostname: string = document.location.hostname;
   electrsPort: number = 0;
   network: string = '';
-  env: Env;
   code: any;
   desktopDocsNavPosition: string = "relative";
   faq: any[];
   restDocs: any[];
+  restDocsCode: any;
   wsDocs: any;
   screenWidth: number;
   officialMempoolInstance: boolean;
@@ -58,9 +57,9 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.env = this.stateService.env;
     this.network = ( this.stateService.network === '' ) ? 'mainnet' : this.stateService.network;
-
     this.faq = faqData;
     this.restDocs = restApiDocsData;
+    this.restDocsCode = restApiDocsCode;
     this.wsDocs = wsApiDocsData;
    
     switch( this.network ) {
@@ -127,17 +126,15 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   }
 
   getSampleUrl( item, forDisplay ) {
-    const mergedItem = this.getMergedItem( item );
     if( this.network === 'mainnet' || this.network === 'liquid' || this.network === 'bisq' ) {
-      return ( forDisplay ? `/api${mergedItem.codeTemplates.curl.textDisplay}` : `${document.location.protocol}//${document.location.host}/api${mergedItem.codeTemplates.curl.text}` );
+      return ( forDisplay ? `/api${this.restDocsCode[item.fragment][this.network]['curl']['textDisplay']}` : `${document.location.protocol}//${document.location.host}/api${this.restDocsCode[item.fragment][this.network]['curl']['text']}` );
     } else {
-      return ( forDisplay ? `/${this.network}/api${mergedItem.codeTemplates.curl.textDisplay}` : `${document.location.protocol}//${document.location.host}/${this.network}/api${mergedItem.codeTemplates.curl.text}` );
+      return ( forDisplay ? `/${this.network}/api${this.restDocsCode[item.fragment][this.network]['curl']['textDisplay']}` : `${document.location.protocol}//${document.location.host}/${this.network}/api${this.restDocsCode[item.fragment][this.network]['curl']['text']}` );
     }
   }
 
   getEndpointDescription( item ) {
-    const mergedItem = this.getMergedItem( item );
-    return mergedItem.description;
+    return ( item.hasOwnProperty(this.network) && item[this.network].hasOwnProperty('description') ) ? item[this.network]['description'] : item.description;
   }
 
   /*wrapUrl(network: string, code: any, websocket: boolean = false) {
@@ -156,46 +153,5 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     }
     return `${document.location.hostname}${curlNetwork}${text}`;
   }*/
-
-  //enables selective overriding for network-specific attributes
-  getMergedItem( item: any ) {
-    let merged: any = {};
-    Object.assign( merged, item );
-    this.networks.forEach( n => delete merged[n] );
-    if( item.hasOwnProperty( this.network ) ) {
-      for( let k1 in item[ this.network ] ) {
-        if( item[ this.network ].hasOwnProperty(k1) ) {
-          if( k1 == 'codeTemplates' ) {
-            for( let k2 in item[ this.network ]['codeTemplates'] ) {
-              merged['codeTemplates'][k2] = item[ this.network ][k1][k2];  
-            }
-          } else {
-            merged[k1] = item[ this.network ][k1];
-          }
-        }
-      }
-    }
-    merged.codeTemplates = this.processParameters( merged );
-    return merged;
-  }
-
-  processParameters( merged: any ) {
-    for( let k in merged.codeTemplates ) {
-      if( merged['codeTemplates'][k].hasOwnProperty('template') ) {
-        if( k === 'curl' ) {
-          merged.codeTemplates[k]['textDisplay'] = ( merged.parameters.labels.length > 0 ? this.insertParameters( merged.codeTemplates[k]['template'], merged.parameters.labels, true ) : merged.codeTemplates[k].template );
-        }
-        merged.codeTemplates[k]['text'] = ( merged.parameters.exampleValues.length > 0 ? this.insertParameters( merged.codeTemplates[k]['template'], merged.parameters.exampleValues, false ) : merged.codeTemplates[k].template );
-      }
-    }
-    return merged.codeTemplates;
-  }
-
-  insertParameters( templateText, parameters, isDisplay ) {
-    for( let i = 0; i < parameters.length; i++ ) {
-      templateText = templateText.replace( '%{' + (i+1) + '}', ( isDisplay ? ":" : "" ) + parameters[i] );
-    }
-    return templateText;
-  }
 
 }

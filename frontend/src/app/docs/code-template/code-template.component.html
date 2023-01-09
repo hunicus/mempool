@@ -10,11 +10,11 @@
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][1]" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">CommonJS</a>
       <ng-template ngbNavContent>
-        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapCommonJS()"></app-clipboard></div>
+        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="getCommonJs()"></app-clipboard></div>
         <div class="links">
           <a [href]="npmGithubLink()" target="_blank">GitHub Repo</a>
         </div>
-        <pre><code [innerText]="wrapCommonJS()"></code></pre>
+        <pre><code [innerText]="getCommonJs()"></code></pre>
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][2]" role="presentation">
@@ -26,8 +26,8 @@
           <a [href]="npmModuleLink()" target="_blank">NPM Package</a>
         </div>
         <pre><code [innerText]="wrapImportTemplate()"></code></pre>
-        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="wrapEsModule()"></app-clipboard></div>
-        <pre><code [innerText]="wrapEsModule()"></code></pre>
+        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="getEsModule()"></app-clipboard></div>
+        <pre><code [innerText]="getEsModule()"></code></pre>
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][3]" role="presentation">
