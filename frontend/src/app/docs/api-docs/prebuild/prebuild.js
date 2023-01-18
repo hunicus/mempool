@@ -3,8 +3,10 @@ const jsb = require("js-beautify");
 const htmlb = require("js-beautify").html;
 const request = require('request');
 const apiDocs = require('../api-docs-data.js');
+const apiDocsResponses = require('../api-docs-code.js');
 
 const restDocs = apiDocs.restApiDocsData;
+const restDocsCode = apiDocsResponses.restApiDocsCode;
 const mode = process.argv[2];
 const networks = ["mainnet", "testnet", "signet", "liquid", "liquidtestnet", "bisq"];
 
@@ -44,19 +46,30 @@ restDocs.forEach( function(e) {
             if( e.showCodeExamples[n][2] ) {
                 formattedData[e.fragment][n]['esmodule'] = wrapEsModule(merged, n);
             }
-            //formattedData[e.fragment][n]['esmodule'] = 
-            fs.writeFileSync( '../api-docs-code.ts', 'export const restApiDocsCode = ' + JSON.stringify( formattedData, undefined, 4 ) + ';' );
-            //add commonjs
-            //add esmodule
-            //add code fields to json file
-            //then make request for response & add response to json
+            
+            if( !merged.responseSettings.skip && ( ( mode === 'force-reset-all' ) || ( ( ( typeof mode === 'undefined' ) || ( mode === merged.fragment ) ) && !merged.responseSettings.freeze ) ) ) {
+                url = getUrl( n, merged.codeTemplates.curl.text );
+                request( url, function( error, response, body ) {
+                    if( error ) {
+                        console.log( '\n\nERROR FETCHING ' + url + ' -->\n\n' + error + '\n\n' );
+                    } else {
+                        responseObj = JSON.parse(body);
+                        truncateJSON( responseObj );
+                        formattedData[e.fragment][n]['response'] = JSON.stringify( responseObj, undefined, 2 );
+                        writeTsFile( formattedData );
+                    }
+                });
+            } else {
+                formattedData[e.fragment][n]['response'] = ( restDocsCode[e.fragment][n].hasOwnProperty('response') ? restDocsCode[e.fragment][n]['response'] : '' );
+                writeTsFile( formattedData );
+            }
         });
     }
 });
 
 function wrapCommonJS( item, network ) {
     
-    if( item.codeTemplates.commonjs.options.hasOwnProperty( 'noWrap' ) && item.codeTemplates.commonjs.options.noWrap ) {
+    if( item.codeTemplates.commonjs.hasOwnProperty( 'options' ) && item.codeTemplates.commonjs.options.hasOwnProperty( 'noWrap' ) && item.codeTemplates.commonjs.options.noWrap ) {
         return item.codeTemplates.commonjs.text;
     }
 
@@ -104,6 +117,10 @@ function normalizeHosts( text, whichTemplate, network ) {
 }
 
 function wrapEsModule( item, network ) {
+
+    if( item.codeTemplates.esmodule.hasOwnProperty( 'options' ) && item.codeTemplates.esmodule.options.hasOwnProperty( 'noWrap' ) && item.codeTemplates.esmodule.options.noWrap ) {
+        return item.codeTemplates.esmodule.text;
+    }
 
     let text = normalizeHosts( item.codeTemplates.esmodule.text, 'esmodule', network );
 
@@ -161,49 +178,62 @@ function processParameters( merged ) {
     return templateText;
 }
 
-/*let mergedItem = {};
-let url = '';
-let responseObj = {};
-restDocs.forEach( function(e) {
-    if( e.type === 'endpoint' && e.fragment === endpoint ) {
-        networks.forEach( function(n) {
-            if( e.hasOwnProperty(n) ) {
-                mergedItem = getMergedItem( e, n );
-                url = getUrl( mergedItem, n );
-                request( url, function( error, response, body ) {
-                    if( error ) {
-                        console.log( n + '-->\n\n' + error + '\n\n' );
-                    } else {
-                        responseObj = JSON.parse(body);
-                        fs.writeFileSync( __dirname + '/responses/' + n + '.json', JSON.stringify( responseObj, undefined, 2 ) );
-                    }
-                });
-                //implement substitutions
-            }
-        });
-    }
-});
 
-function getUrl( item, n ) {
-    switch( n ) {
+/*function getResponse( network, path ) {
+    url = getUrl( network, path );
+    
+    request( url, function( error, response, body ) {
+        if( error ) {
+            console.log( '\n\nERROR FETCHING ' + url + ' -->\n\n' + error + '\n\n' );
+        } else {
+            responseObj = JSON.parse(body);
+            return JSON.stringify( responseObj, undefined, 2 );
+        }
+    });
+}*/
+
+function getUrl( network, path ) {
+    switch( network ) {
         case 'mainnet':
-            return 'https://mempool.space/api' + item.codeTemplates.curl;
+            return 'https://mempool.space/api' + path;
             break;
         case 'testnet':
-            return 'https://mempool.space/testnet/api' + item.codeTemplates.curl;
+            return 'https://mempool.space/testnet/api' + path;
             break;
         case 'signet':
-            return 'https://mempool.space/signet/api' + item.codeTemplates.curl;
+            return 'https://mempool.space/signet/api' + path;
             break;
         case 'liquid':
-            return 'https://liquid.network/api' + item.codeTemplates.curl;
+            return 'https://liquid.network/api' + path;
             break;
         case 'liquidtestnet':
-            return 'https://liquid.network/testnet/api' + item.codeTemplates.curl;
+            return 'https://liquid.network/liquidtestnet/api' + path;
             break;
         case 'bisq':
-            return 'https://bisq.markets/api' + item.codeTemplates.curl;
+            return 'https://bisq.markets/api' + path;
             break;
     }
 }
-*/
+
+function truncateJSON( value ) {
+    if( typeof value === 'object' ) {
+        if( Array.isArray( value ) ) {
+            if( value.length > 2 ) {
+                value.length = 2;
+                value.push( { "...": "..." } );
+            }
+            value.forEach( function(e) {
+                truncateJSON( e );
+            });
+        } else if( value !== null ) {
+            console.log(value);
+            Object.keys(value).forEach(function( k, i ) {
+                truncateJSON( value[k] );
+            });
+        }
+    }
+}
+
+function writeTsFile( data ) {
+    fs.writeFileSync( '../api-docs-code.ts', '//DO NOT EDIT THIS FILE BY HAND\n\nexport const restApiDocsCode = ' + JSON.stringify( formattedData, undefined, 4 ) + ';' );
+}
