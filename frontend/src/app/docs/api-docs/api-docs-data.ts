@@ -131,18 +131,14 @@ export const restApiDocsData = [
     description: "Returns details about difficulty adjustment.",
     codeTemplates: {
       curl: {
-        template: `/v1/difficulty-adjustment`,
-        options: {}
+        template: `/v1/difficulty-adjustment`
       },
       commonjs: {
-        template: `const { %{0}: { difficulty } } = mempoolJS(); const difficultyAdjustment = await difficulty.getDifficultyAdjustment(); document.getElementById("result").textContent = JSON.stringify(difficultyAdjustment, undefined, 2);`,
-        options: {}
+        template: `const { %{0}: { difficulty } } = mempoolJS(); const difficultyAdjustment = await difficulty.getDifficultyAdjustment(); document.getElementById("result").textContent = JSON.stringify(difficultyAdjustment, undefined, 2);`
       },
       esmodule: {
-        template: `const { %{0}: { difficulty } } = mempoolJS(); const difficultyAdjustment = await difficulty.getDifficultyAdjustment(); console.log(difficultyAdjustment);`,
-        options: {}
-      },
-      python: {}
+        template: `const { %{0}: { difficulty } } = mempoolJS(); const difficultyAdjustment = await difficulty.getDifficultyAdjustment(); console.log(difficultyAdjustment);`
+      }
     },
     parameters: {
       labels: [],
@@ -150,7 +146,7 @@ export const restApiDocsData = [
     },
     responseSettings: {
       freeze: true,
-      manual: false
+      skip: false
     }
   },
   {
@@ -165,16 +161,13 @@ export const restApiDocsData = [
     description: "Returns statistics about all Bisq transactions.",
     codeTemplates: {
       curl: {
-        template: `/stats`,
-        options: {}
+        template: `/stats`
       },
       commonjs: { 
-        template: `const { %{0}: { statistics } } = mempoolJS(); const stats = await statistics.getStats(); document.getElementById("result").textContent = JSON.stringify(stats, undefined, 2);`,
-        options: {}
+        template: `const { %{0}: { statistics } } = mempoolJS(); const stats = await statistics.getStats(); document.getElementById("result").textContent = JSON.stringify(stats, undefined, 2);`
       },
       esmodule: {
-        template: `const { %{0}: { statistics } } = mempoolJS(); const stats = await statistics.getStats(); console.log(stats);`,
-        options: {}
+        template: `const { %{0}: { statistics } } = mempoolJS(); const stats = await statistics.getStats(); console.log(stats);`
       }
     },
     parameters: {
@@ -183,7 +176,7 @@ export const restApiDocsData = [
     },
     responseSettings: {
       freeze: true,
-      manual: false
+      skip: false
     } 
   },
 
@@ -203,18 +196,14 @@ export const restApiDocsData = [
     description: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
     codeTemplates: {
       curl: {
-        template: `/v1/blocks/%{1}`,
-        options: {}
+        template: `/v1/blocks/%{1}`
       },
       commonjs: {
-        template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`,
-        options: {}
+        template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
       },
       esmodule: {
-        template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);`,
-        options: {}
-      },
-      python: {}
+        template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);`
+      }
     },
     parameters: {
       labels: ['[/:startHeight]'],
@@ -222,7 +211,7 @@ export const restApiDocsData = [
     },
     responseSettings: {
       freeze: true,
-      manual: false
+      skip: false
     },
     testnet: {
       parameters: {
@@ -240,8 +229,7 @@ export const restApiDocsData = [
       description: "Returns details on the past 10 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned.",
       codeTemplates: {
         curl: {
-          template: `/blocks/%{1}`,
-          options: {}
+          template: `/blocks/%{1}`
         },
       },
       parameters: {
@@ -253,8 +241,7 @@ export const restApiDocsData = [
       description: "Returns details on the past 10 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned.",
       codeTemplates: {
         curl: {
-          template: `/blocks/%{1}`,
-          options: {}
+          template: `/blocks/%{1}`
         },
       },
       parameters: {
@@ -266,16 +253,13 @@ export const restApiDocsData = [
       description: "<p>Returns the past <code>n</code> blocks with BSQ transactions starting <code>m</code> blocks ago.</p><p>Assume a block height of 700,000. Query <code>/blocks/0/10</code> for the past 10 blocks before 700,000 with BSQ transactions. Query <code>/blocks/1000/10</code> for the past 10 blocks before 699,000 with BSQ transactions.",
       codeTemplates: {
         curl: {
-          template: `/blocks/%{1}/%{2}`,
-          options: {}
+          template: `/blocks/%{1}/%{2}`
         },
         commonjs: {
-          template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`,
-          options: {}
+          template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
         },
         esmodule: {
-          template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); console.log(getBlocks);`,
-          options: {}
+          template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); console.log(getBlocks);`
         }
       },
       parameters: {
