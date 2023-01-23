@@ -1,5 +1,107 @@
+/**********************************************************************************************************************************
+
+  EXAMPLE OF HOW A REST API DOC OBJECT WORKS
+
+  {
+    //GENERAL INFO
+    //the following properties must be specified for every rest endpoint ----------->
+
+    type: "endpoint",               //string, must be either 'endpoint' or 'category'
+    category: "blocks",             
+    httpRequestMethod: "GET",       
+    fragment: "get-blocks",         //string, for anchor links
+    title: "GET Blocks",            
+    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),    //array that determines which network docs pages show the endpoint
+    showCodeExamples: showCodeExamples,     //an object that determines which code examples are shown on each network; can be modified using toggleCodeExampleVisibility() for convenience
+
+    //PROPERTIES FOR ALL NETWORKS
+    //the following properties apply to ALL networks unless overridden in network-specific objects (see signet and bisq objects below for examples) ----------->
+
+    description: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
+
+    //PROPERTIES FOR ALL NETWORKS - CODE TEMPLATES
+    //the following code templates are applied for ALL networks unless overridden in network-specific properties.
+
+    codeTemplates: {
+      curl: {
+        template: `/v1/blocks/%{1}`
+      },
+      commonjs: {
+        template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
+      },
+      esmodule: {
+        template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);`
+      }
+    },
+
+    //PROPERTIES FOR ALL NETWORKS - PARAMETERS
+    //the following parameters are applied for ALL networks unless overridden in network-specific properties.
+
+    parameters: {
+      labels: ['[/:startHeight]'],
+      exampleValues: [730000]
+    },
+
+    //PROPERTIES FOR ALL NETWORKS - RESPONSE FETCHING SETTINGS
+    //setting `explicit` disables response fetching and uses the provided text as a response.
+    //if `freeze` is true, existing response from `api-docs-code.ts` will be used, and no http request will be made for a new response.
+    //if `freeze` is false, an http request will be made for a response.
+    //it is possible to set this per network...see signet property below for example.
+    //see init.sh for further details, including using `force-reset-all` to sanity-check all non-explicit endpoints for changes in response structure, etc.
+
+    responseSettings: {
+      freeze: true,
+      explicit: ''
+    },
+
+    //PROPERTIES FOR SIGNET ONLY (EXAMPLE)
+    //the following properties override corresponding properties from above when signet is the network
+    //a parameters override, if provided, must specify BOTH labels AND corresponding exampleValues.,,the entire parameters object is overridden, so specifying just exampleValues will NOT work.
+    //the following responseSettings override results in ONLY signet response being fetched (for other networks, `freeze` is true, as specified above).
+
+    signet: {
+      parameters: {
+        labels: ['[/:startHeight]'],
+        exampleValues: [53783]
+      },
+      responseSettings: {
+        freeze: false,
+        explicit: ''
+      },
+    },
+
+    //PROPERTIES FOR BISQ ONLY (EXAMPLE)
+    //the following properties override corresponding properties from above when bisq is the network
+    //take note of the options property for commonjs...it is meant to specify optional options for special treatment; for example, noWrap does not wrap template with boilerplate javascript code (needed for liquid's `/api/v1/asset/:asset_id/icon` endpoint)
+    //other options can be specified and implemented as needed.
+
+    bisq: {
+      description: "<p>Returns the past <code>n</code> blocks with BSQ transactions starting <code>m</code> blocks ago.</p><p>Assume a block height of 700,000. Query <code>/blocks/0/10</code> for the past 10 blocks before 700,000 with BSQ transactions. Query <code>/blocks/1000/10</code> for the past 10 blocks before 699,000 with BSQ transactions.",
+      codeTemplates: {
+        curl: {
+          template: `/blocks/%{1}/%{2}`
+        },
+        commonjs: {
+          template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
+          options: { "noWrap": true }
+        },,
+        esmodule: {
+          template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); console.log(getBlocks);`
+        }
+      },
+      parameters: {
+        labels: ['/:m', '/:n'],
+        exampleValues: [0,5]
+      }
+    }
+
+  }
+  
+**********************************************************************************************************************************/
+
 const bitcoinNetworks = ["mainnet", "testnet", "signet"];
 const liquidNetworks = ["liquid", "liquidtestnet"];
+
 const miningTimeIntervals = "<code>24h</code>, <code>3d</code>, <code>1w</code>, <code>1m</code>, <code>3m</code>, <code>6m</code>, <code>1y</code>, <code>2y</code>, <code>3y</code>";
 
 const showCodeExamples = { 
@@ -9,7 +111,7 @@ const showCodeExamples = {
   "signet": [ true, true, true, false ],
   "bisq": [ true, true, true, false ],
   "liquid": [ true, true, true, false ],
-  "liquidtestnet": [ true, false, false, false ],
+  "liquidtestnet": [ true, false, false, false ]
 };
 
 function toggleCodeExampleVisibility( changes ) {
@@ -127,7 +229,6 @@ export const restApiDocsData = [
     title: "GET Difficulty Adjustment",
     showConditions: bitcoinNetworks,
     showCodeExamples: showCodeExamples,
-    //overridable -->
     description: "Returns details about difficulty adjustment.",
     codeTemplates: {
       curl: {
@@ -140,14 +241,10 @@ export const restApiDocsData = [
         template: `const { %{0}: { difficulty } } = mempoolJS(); const difficultyAdjustment = await difficulty.getDifficultyAdjustment(); console.log(difficultyAdjustment);`
       }
     },
-    parameters: {
-      labels: [],
-      exampleValues: []
-    },
     responseSettings: {
       freeze: true
     }
-  }/*,
+  },
   {
     type: "endpoint",
     category: "general",
@@ -156,7 +253,6 @@ export const restApiDocsData = [
     title: "GET Stats",
     showConditions: ["bisq"],
     showCodeExamples: showCodeExamples,
-    //overridable -->
     description: "Returns statistics about all Bisq transactions.",
     codeTemplates: {
       curl: {
@@ -169,15 +265,10 @@ export const restApiDocsData = [
         template: `const { %{0}: { statistics } } = mempoolJS(); const stats = await statistics.getStats(); console.log(stats);`
       }
     },
-    parameters: {
-      labels: [],
-      exampleValues: []
-    },
     responseSettings: {
-      freeze: true,
-      explicit: ''
+      freeze: true
     } 
-  },
+  }/*,
 
 
 
@@ -191,7 +282,6 @@ export const restApiDocsData = [
     title: "GET Blocks",
     showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),
     showCodeExamples: showCodeExamples,
-    //overridable -->
     description: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
     codeTemplates: {
       curl: {
