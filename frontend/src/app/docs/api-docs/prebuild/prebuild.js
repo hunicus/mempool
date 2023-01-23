@@ -41,15 +41,16 @@ restDocs.forEach( function(e) {
                 formattedData[e.fragment][n]['curl'] = {};
                 formattedData[e.fragment][n]['curl']['text'] = merged.codeTemplates.curl.text;
                 formattedData[e.fragment][n]['curl']['textDisplay'] = merged.codeTemplates.curl.textDisplay;
-                formattedData[e.fragment][n]['curl']['textDisplayHighlighted'] = Prism.highlight( merged.codeTemplates.curl.textDisplay, Prism.languages.bash, 'bash');
             }
             
             if( e.showCodeExamples[n][1] ) {
                 formattedData[e.fragment][n]['commonjs'] = wrapCommonJS(merged, n);
+                formattedData[e.fragment][n]['commonjsHighlighted'] = Prism.highlight( formattedData[e.fragment][n]['commonjs'], Prism.languages.javascript, 'javascript' );
             }
 
             if( e.showCodeExamples[n][2] ) {
                 formattedData[e.fragment][n]['esmodule'] = wrapEsModule(merged, n);
+                formattedData[e.fragment][n]['esmoduleHighlighted'] = Prism.highlight( formattedData[e.fragment][n]['esmodule'], Prism.languages.javascript, 'javascript' );
             }
             
             if( !merged.responseSettings.skip && ( ( mode === 'force-reset-all' ) || ( ( ( typeof mode === 'undefined' ) || ( mode === merged.fragment ) ) && !merged.responseSettings.freeze ) ) ) {
@@ -79,7 +80,7 @@ function wrapCommonJS( item, network ) {
         return item.codeTemplates.commonjs.text;
     }
 
-    let text = normalizeHosts( item.codeTemplates.commonjs.text, 'commonjs', network );
+    let text = normalizeHosts( item.codeTemplates.commonjs.text, network );
 
     let importText = '';
     if( network === 'bisq') {
@@ -96,16 +97,16 @@ function wrapCommonJS( item, network ) {
         resultHtml = `<h2>Blocks</h2><pre id="result-blocks">Waiting for data</pre><br> <h2>Mempool Info</h2><pre id="result-mempool-info">Waiting for data</pre><br> <h2>Transactions</h2><pre id="result-transactions">Waiting for data</pre><br> <h2>Mempool Blocks</h2><pre id="result-mempool-blocks">Waiting for data</pre><br>`;
     }
 
-    return Prism.highlight( htmlb( `<!DOCTYPE html> <head> ${importText} <script> const init = async () => { ${text} }; init(); </script> </head> <body> ${resultHtml} </body> </html>`, { indent_size: 2 } ), Prism.languages.javascript, 'javascript' );
+    return htmlb( `<!DOCTYPE html> <head> ${importText} <script> const init = async () => { ${text} }; init(); </script> </head> <body> ${resultHtml} </body> </html>`, { indent_size: 2 } );
 
 }
 
-function normalizeHosts( text, whichTemplate, network ) {
+function normalizeHosts( text, network ) {
 
     if( network === 'mainnet' || network === 'liquid' || network === 'bisq' ) {
-        text = text.replace('mempoolJS();', `mempoolJS({ hostname: 'DOCUMENT_LOCATION_HOST' });`);
+        text = text.replace('mempoolJS();', `mempoolJS({ hostname: "DOCUMENT_LOCATION_HOST" });`);
     } else {
-        text = text.replace('mempoolJS();', `mempoolJS({ hostname: 'DOCUMENT_LOCATION_HOST', network: 'CURRENT_NETWORK' });`);
+        text = text.replace('mempoolJS();', `mempoolJS({ hostname: "DOCUMENT_LOCATION_HOST", network: "CURRENT_NETWORK" });`);
     }
 
     if( network === 'mainnet' || network === 'testnet' || network === 'signet' ) {
@@ -128,7 +129,7 @@ function wrapEsModule( item, network ) {
         return item.codeTemplates.esmodule.text;
     }
 
-    let text = normalizeHosts( item.codeTemplates.esmodule.text, 'esmodule', network );
+    let text = normalizeHosts( item.codeTemplates.esmodule.text, network );
 
     let importText = '';
     if( network === 'bisq') {
