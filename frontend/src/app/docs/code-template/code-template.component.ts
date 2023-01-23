@@ -1,11 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { StateService } from '../../services/state.service';
 import { restApiDocsCode } from '../api-docs/api-docs-code';
 
 @Component({
   selector: 'app-code-template',
   templateUrl: './code-template.component.html',
-  styleUrls: ['./code-template.component.scss']
+  styleUrls: ['./code-template.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class CodeTemplateComponent implements OnInit {
   @Input() hostname: string;
@@ -42,12 +43,18 @@ export class CodeTemplateComponent implements OnInit {
     }
   }
 
-  getCommonJs() {
-    return this.restDocsCode[this.item.fragment][this.network]['commonjs'].replace('DOCUMENT_LOCATION_HOST',document.location.host).replace('CURRENT_NETWORK',this.network);
+  getCommonJs( highlighted ) {
+    let code = ( highlighted ? this.restDocsCode[this.item.fragment][this.network]['commonjsHighlighted'] : this.restDocsCode[this.item.fragment][this.network]['commonjs'] );
+    return code.replace('DOCUMENT_LOCATION_HOST',document.location.host).replace('CURRENT_NETWORK',this.network);
   }
 
-  getEsModule() {
-    return this.restDocsCode[this.item.fragment][this.network]['esmodule'].replace('DOCUMENT_LOCATION_HOST',document.location.host).replace('CURRENT_NETWORK',this.network);
+  getEsModule( highlighted ) {
+    let code = ( highlighted ? this.restDocsCode[this.item.fragment][this.network]['esmoduleHighlighted'] : this.restDocsCode[this.item.fragment][this.network]['esmodule'] );
+    return code.replace('DOCUMENT_LOCATION_HOST',document.location.host).replace('CURRENT_NETWORK',this.network);
+  }
+
+  getResponse( highlighted ) {
+    return ( highlighted ? this.restDocsCode[this.item.fragment][this.network]['responseHighlighted'] : this.restDocsCode[this.item.fragment][this.network]['response'] );
   }
 
   wrapImportTemplate() {

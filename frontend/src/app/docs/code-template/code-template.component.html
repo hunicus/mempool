@@ -1,4 +1,4 @@
-<div class="code">
+<div class="code encapsulate-style">
   <ul ngbNav #navCodeTemplate="ngbNav" class="nav-tabs code-tab" role="tablist">
     <li ngbNavItem *ngIf="item.httpRequestMethod !== 'websocket'" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">cURL</a>
@@ -10,11 +10,11 @@
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][1]" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight( $event )" role="tab">CommonJS</a>
       <ng-template ngbNavContent>
-        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="getCommonJs()"></app-clipboard></div>
+        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="getCommonJs( false )"></app-clipboard></div>
         <div class="links">
           <a [href]="npmGithubLink()" target="_blank">GitHub Repo</a>
         </div>
-        <pre><code [innerText]="getCommonJs()"></code></pre>
+        <pre [innerHTML]="getCommonJs( true )"></pre>
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][2]" role="presentation">
@@ -26,8 +26,8 @@
           <a [href]="npmModuleLink()" target="_blank">NPM Package</a>
         </div>
         <pre><code [innerText]="wrapImportTemplate()"></code></pre>
-        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="getEsModule()"></app-clipboard></div>
-        <pre><code [innerText]="getEsModule()"></code></pre>
+        <div class="subtitle"><ng-container i18n="API Docs code example">Code Example</ng-container> <app-clipboard [text]="getEsModule( false )"></app-clipboard></div>
+        <pre [innerHTML]="getEsModule( true )"></pre>
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="item['showCodeExamples'][network][3]" role="presentation">
@@ -40,7 +40,7 @@
   </ul>
   <div [ngbNavOutlet]="navCodeTemplate"></div>
   <div class="response">
-    <div class="subtitle"><ng-container i18n="API Docs API response">Response</ng-container> <app-clipboard [text]="item.response"></app-clipboard></div>
-    <pre><code [innerText]="item.response"></code></pre>
+    <div class="subtitle"><ng-container i18n="API Docs API response">Response</ng-container> <app-clipboard [text]="getResponse( false )"></app-clipboard></div>
+    <pre [innerHTML]="getResponse( true )"></pre>
   </div>
 </div>

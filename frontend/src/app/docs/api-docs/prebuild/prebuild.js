@@ -52,23 +52,32 @@ restDocs.forEach( function(e) {
                 formattedData[e.fragment][n]['esmodule'] = wrapEsModule(merged, n);
                 formattedData[e.fragment][n]['esmoduleHighlighted'] = Prism.highlight( formattedData[e.fragment][n]['esmodule'], Prism.languages.javascript, 'javascript' );
             }
-            
-            if( !merged.responseSettings.skip && ( ( mode === 'force-reset-all' ) || ( ( ( typeof mode === 'undefined' ) || ( mode === merged.fragment ) ) && !merged.responseSettings.freeze ) ) ) {
-                url = getUrl( n, merged.codeTemplates.curl.text );
-                request( url, function( error, response, body ) {
-                    if( error ) {
-                        console.log( '\n\nERROR FETCHING ' + url + ' -->\n\n' + error + '\n\n' );
-                    } else {
-                        responseObj = JSON.parse(body);
-                        truncateJSON( responseObj );
-                        formattedData[e.fragment][n]['response'] = JSON.stringify( responseObj, undefined, 2 );
-                        formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( responseObj, undefined, 2 ), Prism.languages.json, 'json');
-                        writeTsFile( formattedData );
-                    }
-                });
-            } else {
-                formattedData[e.fragment][n]['response'] = ( restDocsCode[e.fragment][n].hasOwnProperty('response') ? restDocsCode[e.fragment][n]['response'] : '' );
+
+            if( merged.responseSettings.hasOwnProperty('explicit') && merged.responseSettings.explicit.length > 0 ) {
+                formattedData[e.fragment][n]['response'] = JSON.stringify( merged.responseSettings.explicit, undefined, 2 );
+                formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( merged.responseSettings.explicit, undefined, 2 ), Prism.languages.json, 'json');
                 writeTsFile( formattedData );
+            } else {
+                if( ( mode === 'force-reset-all' ) || ( ( ( typeof mode === 'undefined' ) || ( mode === merged.fragment ) ) && !merged.responseSettings.freeze ) ) {
+                    url = getUrl( n, merged.codeTemplates.curl.text );
+                    request( url, function( error, response, body ) {
+                        if( error ) {
+                            console.log( '\n\nERROR FETCHING ' + url + ' -->\n\n' + error + '\n\n' );
+                        } else {
+                            responseObj = JSON.parse(body);
+                            truncateJSON( responseObj );
+                            formattedData[e.fragment][n]['response'] = JSON.stringify( responseObj, undefined, 2 );
+                            formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( responseObj, undefined, 2 ), Prism.languages.json, 'json');
+                            writeTsFile( formattedData );
+                        }
+                    });
+                } else {
+                    if( restDocsCode[e.fragment][n].hasOwnProperty('response') ) {
+                        formattedData[e.fragment][n]['response'] = restDocsCode[e.fragment][n]['response'];
+                        formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( restDocsCode[e.fragment][n]['response'], Prism.languages.json, 'json');
+                    }
+                    writeTsFile( formattedData );
+                }
             }
         });
     }

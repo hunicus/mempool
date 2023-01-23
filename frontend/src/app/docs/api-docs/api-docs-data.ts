@@ -145,10 +145,9 @@ export const restApiDocsData = [
       exampleValues: []
     },
     responseSettings: {
-      freeze: true,
-      skip: false
+      freeze: true
     }
-  },
+  }/*,
   {
     type: "endpoint",
     category: "general",
@@ -176,7 +175,7 @@ export const restApiDocsData = [
     },
     responseSettings: {
       freeze: true,
-      skip: false
+      explicit: ''
     } 
   },
 
@@ -211,7 +210,7 @@ export const restApiDocsData = [
     },
     responseSettings: {
       freeze: true,
-      skip: false
+      explicit: ''
     },
     testnet: {
       parameters: {
@@ -267,7 +266,7 @@ export const restApiDocsData = [
         exampleValues: [0,5]
       }
     }
-  }
+  }*/
 
 
 ];
