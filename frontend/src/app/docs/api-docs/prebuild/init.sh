@@ -10,5 +10,5 @@ tsc ../api-docs-code.ts
 # pass '<fragment>' to get responses for specific endpoint
 node prebuild.js $1
 
-#rm ../api-docs-data.js
-#rm ../api-docs-code.js
+rm ../api-docs-data.js
+rm ../api-docs-code.js

@@ -1,6 +1,8 @@
 const fs = require('fs');
 const jsb = require("js-beautify");
 const htmlb = require("js-beautify").html;
+const Prism = require('prismjs');
+const loadLanguages = require('prismjs/components/');
 const request = require('request');
 const apiDocs = require('../api-docs-data.js');
 const apiDocsResponses = require('../api-docs-code.js');
@@ -14,6 +16,8 @@ let formattedData = {};
 let responseObj = {};
 let merged = {};
 let url = '';
+
+loadLanguages( ['json', 'bash'] ) ; //for prism syntax highlighting; javascript is loaded by default
 
 //get existing data
 
@@ -37,6 +41,7 @@ restDocs.forEach( function(e) {
                 formattedData[e.fragment][n]['curl'] = {};
                 formattedData[e.fragment][n]['curl']['text'] = merged.codeTemplates.curl.text;
                 formattedData[e.fragment][n]['curl']['textDisplay'] = merged.codeTemplates.curl.textDisplay;
+                formattedData[e.fragment][n]['curl']['textDisplayHighlighted'] = Prism.highlight( merged.codeTemplates.curl.textDisplay, Prism.languages.bash, 'bash');
             }
             
             if( e.showCodeExamples[n][1] ) {
@@ -56,6 +61,7 @@ restDocs.forEach( function(e) {
                         responseObj = JSON.parse(body);
                         truncateJSON( responseObj );
                         formattedData[e.fragment][n]['response'] = JSON.stringify( responseObj, undefined, 2 );
+                        formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( responseObj, undefined, 2 ), Prism.languages.json, 'json');
                         writeTsFile( formattedData );
                     }
                 });
@@ -90,7 +96,7 @@ function wrapCommonJS( item, network ) {
         resultHtml = `<h2>Blocks</h2><pre id="result-blocks">Waiting for data</pre><br> <h2>Mempool Info</h2><pre id="result-mempool-info">Waiting for data</pre><br> <h2>Transactions</h2><pre id="result-transactions">Waiting for data</pre><br> <h2>Mempool Blocks</h2><pre id="result-mempool-blocks">Waiting for data</pre><br>`;
     }
 
-    return htmlb(`<!DOCTYPE html> <head> ${importText} <script> const init = async () => { ${text} }; init(); </script> </head> <body> ${resultHtml} </body> </html>`, { indent_size: 2 } );
+    return Prism.highlight( htmlb( `<!DOCTYPE html> <head> ${importText} <script> const init = async () => { ${text} }; init(); </script> </head> <body> ${resultHtml} </body> </html>`, { indent_size: 2 } ), Prism.languages.javascript, 'javascript' );
 
 }
 
@@ -178,20 +184,6 @@ function processParameters( merged ) {
     return templateText;
 }
 
-
-/*function getResponse( network, path ) {
-    url = getUrl( network, path );
-    
-    request( url, function( error, response, body ) {
-        if( error ) {
-            console.log( '\n\nERROR FETCHING ' + url + ' -->\n\n' + error + '\n\n' );
-        } else {
-            responseObj = JSON.parse(body);
-            return JSON.stringify( responseObj, undefined, 2 );
-        }
-    });
-}*/
-
 function getUrl( network, path ) {
     switch( network ) {
         case 'mainnet':
@@ -226,7 +218,6 @@ function truncateJSON( value ) {
                 truncateJSON( e );
             });
         } else if( value !== null ) {
-            console.log(value);
             Object.keys(value).forEach(function( k, i ) {
                 truncateJSON( value[k] );
             });
