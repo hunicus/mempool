@@ -45,12 +45,12 @@ export class CodeTemplateComponent implements OnInit {
 
   getCommonJs( highlighted ) {
     let code = ( highlighted ? this.restDocsCode[this.item.fragment][this.network]['commonjsHighlighted'] : this.restDocsCode[this.item.fragment][this.network]['commonjs'] );
-    return code.replace('DOCUMENT_LOCATION_HOST',document.location.host).replace('CURRENT_NETWORK',this.network);
+    return code.replace('%{DOCUMENT_LOCATION_HOST}',document.location.host).replace('%{CURRENT_NETWORK}',this.network);
   }
 
   getEsModule( highlighted ) {
     let code = ( highlighted ? this.restDocsCode[this.item.fragment][this.network]['esmoduleHighlighted'] : this.restDocsCode[this.item.fragment][this.network]['esmodule'] );
-    return code.replace('DOCUMENT_LOCATION_HOST',document.location.host).replace('CURRENT_NETWORK',this.network);
+    return code.replace('%{DOCUMENT_LOCATION_HOST}',document.location.host).replace('%{CURRENT_NETWORK}',this.network);
   }
 
   getResponse( highlighted ) {

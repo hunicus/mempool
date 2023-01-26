@@ -66,7 +66,7 @@
       },
       responseSettings: {
         freeze: false,
-        explicit: ''
+        explicit: '{ "btc": "hodl" }' //specify a response to use in place of fetching one from the server; this property is optional.
       },
     },
 
@@ -268,6 +268,38 @@ export const restApiDocsData = [
     responseSettings: {
       freeze: true
     } 
+  },
+  {
+    type: "category",
+    category: "markets",
+    fragment: "markets",
+    title: "Markets",
+    showConditions: ["bisq"]
+  },
+  {
+    type: "endpoint",
+    category: "markets",
+    httpRequestMethod: "GET",
+    fragment: "get-market-currencies",
+    title: "GET Market Currencies",
+    showConditions: ["bisq"],
+    showCodeExamples: showCodeExamples,
+    description: "Provides list of available currencies for a given base currency.",
+    codeTemplates: {
+      curl: {
+          template: `/currencies`
+      },
+      commonjs: {
+          template: `const { %{0}: { markets } } = mempoolJS(); const currencies = await markets.getCurrencies(); document.getElementById("result").textContent = JSON.stringify(currencies, undefined, 2);`
+      },
+      esmodule: {
+          template: `const { %{0}: { markets } } = mempoolJS(); const currencies = await markets.getCurrencies(); console.log(currencies);`
+      }
+    },
+    responseSettings: {
+      freeze: true,
+      explicit: `{ "BTC": { "code": "BTC", "name": "Bitcoin", "precision": 8, "_type": "crypto" }, "USD": { "code": "USD", "name": "US Dollar", "precision": 8, "_type": "fiat" }, "...": "..." }`
+    }
   }/*,
 
 

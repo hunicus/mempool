@@ -28,7 +28,7 @@ restDocs.forEach( function(e) {
         if( !formattedData.hasOwnProperty(e.fragment) ) {
             formattedData[e.fragment] = {};
         }
-
+        
         e.showConditions.forEach( function(n) {
             
             merged = getMergedItem( e, n );
@@ -54,8 +54,8 @@ restDocs.forEach( function(e) {
             }
 
             if( merged.responseSettings.hasOwnProperty('explicit') && merged.responseSettings.explicit.length > 0 ) {
-                formattedData[e.fragment][n]['response'] = JSON.stringify( merged.responseSettings.explicit, undefined, 2 );
-                formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( merged.responseSettings.explicit, undefined, 2 ), Prism.languages.json, 'json');
+                formattedData[e.fragment][n]['response'] = JSON.stringify( JSON.parse(merged.responseSettings.explicit ), undefined, 2 );
+                formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( JSON.parse( merged.responseSettings.explicit ), undefined, 2 ), Prism.languages.json, 'json');
                 writeTsFile( formattedData );
             } else {
                 if( ( mode === 'force-reset-all' ) || ( ( ( typeof mode === 'undefined' ) || ( mode === merged.fragment ) ) && !merged.responseSettings.freeze ) ) {
@@ -113,9 +113,9 @@ function wrapCommonJS( item, network ) {
 function normalizeHosts( text, network ) {
 
     if( network === 'mainnet' || network === 'liquid' || network === 'bisq' ) {
-        text = text.replace('mempoolJS();', `mempoolJS({ hostname: "DOCUMENT_LOCATION_HOST" });`);
+        text = text.replace('mempoolJS();', `mempoolJS({ hostname: "%{DOCUMENT_LOCATION_HOST}" });`);
     } else {
-        text = text.replace('mempoolJS();', `mempoolJS({ hostname: "DOCUMENT_LOCATION_HOST", network: "CURRENT_NETWORK" });`);
+        text = text.replace('mempoolJS();', `mempoolJS({ hostname: "%{DOCUMENT_LOCATION_HOST}", network: "%{CURRENT_NETWORK}" });`);
     }
 
     if( network === 'mainnet' || network === 'testnet' || network === 'signet' ) {
@@ -179,15 +179,15 @@ function processParameters( merged ) {
     for( let k in merged.codeTemplates ) {
         if( merged['codeTemplates'][k].hasOwnProperty('template') ) {
             if( k === 'curl' ) {
-                merged.codeTemplates[k]['textDisplay'] = ( merged.parameters.labels.length > 0 ? insertParameters( merged.codeTemplates[k]['template'], merged.parameters.labels, true ) : merged.codeTemplates[k].template );
+                merged.codeTemplates[k]['textDisplay'] = ( merged.hasOwnProperty('parameters') && merged.parameters.labels.length > 0 ? insertParameters( merged.codeTemplates[k]['template'], merged.parameters.labels, true ) : merged.codeTemplates[k].template );
             }
-            merged.codeTemplates[k]['text'] = ( merged.parameters.exampleValues.length > 0 ? insertParameters( merged.codeTemplates[k]['template'], merged.parameters.exampleValues, false ) : merged.codeTemplates[k].template );
+            merged.codeTemplates[k]['text'] = ( merged.hasOwnProperty('parameters') && merged.parameters.exampleValues.length > 0 ? insertParameters( merged.codeTemplates[k]['template'], merged.parameters.exampleValues, false ) : merged.codeTemplates[k].template );
         }
     }
     return merged.codeTemplates;
   }
 
-  function insertParameters( templateText, parameters, isCurl ) {
+function insertParameters( templateText, parameters, isCurl ) {
     for( let i = 0; i < parameters.length; i++ ) {
         templateText = templateText.replace( ( isCurl ? '/' : '' ) + '%{' + (i+1) + '}', parameters[i] );
     }
