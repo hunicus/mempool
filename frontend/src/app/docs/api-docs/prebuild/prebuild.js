@@ -185,7 +185,7 @@ function processParameters( merged ) {
         }
     }
     return merged.codeTemplates;
-  }
+}
 
 function insertParameters( templateText, parameters, isCurl ) {
     for( let i = 0; i < parameters.length; i++ ) {
@@ -220,7 +220,7 @@ function getUrl( network, path ) {
 function truncateJSON( value ) {
     if( typeof value === 'object' ) {
         if( Array.isArray( value ) ) {
-            if( value.length > 2 ) {
+            if( value.length > 2 && ( typeof value[0] === 'object' ) ) {
                 value.length = 2;
                 value.push( { "...": "..." } );
             }

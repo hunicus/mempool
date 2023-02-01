@@ -61,7 +61,7 @@
 
     signet: {
       parameters: {
-        labels: ['[/:startHeight]'],
+        labels: ['[/:startHeight]'],    //brackets indicate parameter is optional
         exampleValues: [53783]
       },
       responseSettings: {
@@ -90,7 +90,7 @@
         }
       },
       parameters: {
-        labels: ['/:m', '/:n'],
+        labels: ['/:m', '/:n'], //no brackets means parameter is required
         exampleValues: [0,5]
       }
     }
@@ -300,7 +300,7 @@ export const restApiDocsData = [
       freeze: true,
       explicit: `{ "BTC": { "code": "BTC", "name": "Bitcoin", "precision": 8, "_type": "crypto" }, "USD": { "code": "USD", "name": "US Dollar", "precision": 8, "_type": "fiat" }, "...": "..." }`
     }
-  }/*,
+  },
 
 
 
@@ -388,7 +388,7 @@ export const restApiDocsData = [
         exampleValues: [0,5]
       }
     }
-  }*/
+  }
 
 
 ];
