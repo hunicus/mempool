@@ -150,7 +150,7 @@ export const restApiDocsData = [
     httpRequestMethod: "GET",
     fragment: "get-stats",
     title: "GET Stats",
-    showConditions: ["bisq"],
+    showConditions: [ "bisq" ],
     showCodeExamples: showCodeExamples,
     description: "Returns statistics about all Bisq transactions.",
     codeTemplates: {
@@ -173,7 +173,7 @@ export const restApiDocsData = [
     category: "markets",
     fragment: "markets",
     title: "Markets",
-    showConditions: ["bisq"]
+    showConditions: [ "bisq" ]
   },
   {
     type: "endpoint",
@@ -196,7 +196,6 @@ export const restApiDocsData = [
       }
     },
     responseSettings: {
-      freeze: true,
       explicit: `{ "BTC": { "code": "BTC", "name": "Bitcoin", "precision": 8, "_type": "crypto" }, "USD": { "code": "USD", "name": "US Dollar", "precision": 8, "_type": "fiat" }, "...": "..." }`
     }
   },
@@ -206,7 +205,7 @@ export const restApiDocsData = [
     httpRequestMethod: "GET",
     fragment: "get-market-depth",
     title: "GET Market Depth",
-    showConditions: ["bisq"],
+    showConditions: [ "bisq" ],
     showCodeExamples: showCodeExamples,
     description: "Provides list of open offer prices for a single market.",
     codeTemplates: {
@@ -233,123 +232,404 @@ export const restApiDocsData = [
       maxArrayLength: 5
     }
   },
-
-
-
-
   {
     type: "endpoint",
-    category: "blocks",
+    category: "markets",
     httpRequestMethod: "GET",
-    fragment: "get-blocks",
-    title: "GET Blocks",
-    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),
+    fragment: "get-market-hloc",
+    title: "GET Market HLOC",
+    showConditions: [ "bisq" ],
     showCodeExamples: showCodeExamples,
-    description: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
+    description: "Provides hi/low/open/close data for a given market. This can be used to generate a candlestick chart.",
     codeTemplates: {
       curl: {
-        template: `/v1/blocks%{1}`
+        template: "/hloc?market=%{1}"
       },
       commonjs: {
-        template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const hloc = await markets.getHloc({ market }); document.getElementById(\"result\").textContent = JSON.stringify(hloc, undefined, 2);"
       },
       esmodule: {
-        template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);`
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const hloc = await markets.getHloc({ market }); console.log(hloc);"
       }
     },
     parameters: [
       {
-        label: 'startHeight',
-        exampleValue: '730000',
-        required: false,
-        urlParam: false
-      }
-    ],
+         label: 'market',
+         exampleValue: 'BTC_USD',
+         required: true,
+         urlParam: true
+      }  
+    ],  
     responseSettings: {
-      freeze: true,
-      maxArrayLength: 1
+      freeze: true
+    }
+  },
+  {
+    type: "endpoint",
+    category: "markets",
+    httpRequestMethod: "GET",
+    fragment: "get-markets",
+    title: "GET Markets",
+    showConditions: [ "bisq" ],
+    showCodeExamples: showCodeExamples,
+    description: "Provides list of available markets.",
+    codeTemplates: {
+      curl: {
+        template: "/markets"
+      },
+      commonjs: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const allMarkets = await markets.getMarkets(); document.getElementById(\"result\").textContent = JSON.stringify(allMarkets, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const allMarkets = await markets.getMarkets(); console.log(allMarkets);"
+      }
+    },
+    responseSettings: {
+      explicit: `{  "btc_eur": { "pair": "btc_eur", "lname": "Bitcoin", "rname": "Euro", "lsymbol": "BTC", "rsymbol": "EUR", "lprecision": 8, "rprecision": 2, "ltype": "crypto", "rtype": "fiat", "name": "Bitcoin/Euro" }, "btc_usd": { "pair": "btc_usd", "lname": "Bitcoin", "rname": "US Dollar", "lsymbol": "BTC", "rsymbol": "USD", "lprecision": 8, "rprecision": 2, "ltype": "crypto", "rtype": "fiat", "name": "Bitcoin/US Dollar" }, "...": "..." }`
+    }
+  },
+  {
+    type: "endpoint",
+    category: "markets",
+    httpRequestMethod: "GET",
+    fragment: "get-market-offers",
+    title: "GET Market Offers",
+    showConditions: [ "bisq" ],
+    showCodeExamples: showCodeExamples,
+    description: "Provides list of open offer details for a single market.",
+    codeTemplates: {
+      curl: {
+        template: "/offers?market=%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const offers = await markets.getOffers({ market }); document.getElementById(\"result\").textContent = JSON.stringify(offers, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const offers = await markets.getOffers({ market }); console.log(offers);"
+      }
+    },
+    parameters: [
+      {
+         label: 'market',
+         exampleValue: 'BTC_USD',
+         required: true,
+         urlParam: true
+      }  
+    ],  
+    responseSettings: {
+      freeze: true
+    }
+  },
+  {
+    type: "endpoint",
+    category: "markets",
+    httpRequestMethod: "GET",
+    fragment: "get-market-ticker",
+    title: "GET Market Ticker",
+    showConditions: [ "bisq" ],
+    showCodeExamples: showCodeExamples,
+    description: "Provides 24-hour price ticker. Pass a <code>market</code> parameter for ticker on a single market, or pass no parameter for tickers on all markets.",
+    codeTemplates: {
+      curl: {
+        template: "/ticker?market=%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const ticker = await markets.getTicker({ market }); document.getElementById(\"result\").textContent = JSON.stringify(ticker, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const ticker = await markets.getTicker({ market }); console.log(ticker);"
+      }
+    },
+    parameters: [
+      {
+         label: 'market',
+         exampleValue: 'BTC_USD',
+         required: false,
+         urlParam: true
+      }  
+    ],  
+    responseSettings: {
+      explicit: `{ "last": "24307.26980000", "high": "25223.99990000", "low": "23031.95480000", "volume_left": "1.40500000", "volume_right": "33607.08150000", "buy": "22836.22140000", "sell": "23775.47020000" }` }
+  },
+  {
+    type: "endpoint",
+    category: "markets",
+    httpRequestMethod: "GET",
+    fragment: "get-market-trades",
+    title: "GET Market Trades",
+    showConditions: [ "bisq" ],
+    showCodeExamples: showCodeExamples,
+    description: "Provides list of completed trades for a single market. Specify the number of trades to return with <code>limit</code>, otherwise, the last 100 trades are returned.",
+    codeTemplates: {
+      curl: {
+        template: "/trades?market=%{1}&limit=%{2}"
+      },
+      commonjs: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const trades = await markets.getTrades({ market, limit: %{2} }); document.getElementById(\"result\").textContent = JSON.stringify(trades, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const trades = await markets.getTrades({ market, limit: %{2} }); console.log(trades);"
+      }
+    },
+    parameters: [
+      {
+         label: 'market',
+         exampleValue: 'BTC_USD',
+         required: true,
+         urlParam: true
+      },
+      {
+        label: 'limit',
+        exampleValue: '2',
+        required: false,
+        urlParam: true
+     }
+    ],  
+    responseSettings: {
+      freeze: true
+    }
+  },
+  {
+    type: "endpoint",
+    category: "markets",
+    httpRequestMethod: "GET",
+    fragment: "get-market-volumes",
+    title: "GET Market Volumes",
+    showConditions: [ "bisq" ],
+    showCodeExamples: showCodeExamples,
+    description: "Provides periodic volume data in terms of base currency for one or all markets.",
+    codeTemplates: {
+      curl: {
+        template: "/volumes?basecurrency=%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const volumes = await markets.getVolumes({ market }); document.getElementById(\"result\").textContent = JSON.stringify(volumes, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const volumes = await markets.getVolumes({ market }); console.log(volumes);"
+      }
+    },
+    parameters: [
+      {
+         label: 'basecurrency',
+         exampleValue: 'USD',
+         required: true,
+         urlParam: true
+      }  
+    ],  
+    responseSettings: {
+      freeze: true
+    }
+  },
+  {
+    type: "category",
+    category: "addresses",
+    fragment: "addresses",
+    title: "Addresses",
+    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"])
+  },
+  {
+    type: "endpoint",
+    category: "addresses",
+    httpRequestMethod: "GET",
+    fragment: "get-address",
+    title: "GET Address",
+    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),
+    showCodeExamples: showCodeExamples,
+    description: "Returns details about an address.",
+    codeTemplates: {
+      curl: {
+        template: "/address%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const myAddress = await addresses.getAddress({ address }); document.getElementById(\"result\").textContent = JSON.stringify(myAddress, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const myAddress = await addresses.getAddress({ address }); console.log(myAddress);"
+      }
+    },
+    parameters: [
+      {
+         label: 'address',
+         exampleValue: '1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv',
+         required: true,
+         urlParam: false
+      }  
+    ],  
+    responseSettings: {
+      freeze: true
     },
     testnet: {
       parameters: [
         {
-          label: 'startHeight',
-          exampleValue: '2091187',
-          required: false,
-          urlParam: false
-        }
-      ]
+           label: 'address',
+           exampleValue: 'tb1qp0we5epypgj4acd2c4au58045ruud2pd6heuee',
+           required: true,
+           urlParam: false
+        }  
+      ]  
     },
     signet: {
       parameters: [
         {
-          label: 'startHeight',
-          exampleValue: '53783',
-          required: false,
-          urlParam: false
-        }
-      ]
+           label: 'address',
+           exampleValue: 'tb1qs45jstr4s34gjr8vnttlpzpw9qc5vvr4nylxyw',
+           required: true,
+           urlParam: false
+        }  
+      ]  
     },
     liquid: {
-      description: "Returns details on the past 10 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned.",
-      codeTemplates: {
-        curl: {
-          template: `/blocks%{1}`
-        },
-      },
       parameters: [
         {
-          label: 'startHeight',
-          exampleValue: '1472246',
-          required: false,
-          urlParam: false
+           label: 'address',
+           exampleValue: 'Go65t19hP2FuhBMYtgbdMDgdmEzNwh1i48',
+           required: true,
+           urlParam: false
         }
       ]
     },
     liquidtestnet: {
-      description: "Returns details on the past 10 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned.",
-      codeTemplates: {
-        curl: {
-          template: `/blocks%{1}`
-        },
-      },
       parameters: [
         {
-          label: 'startHeight',
-          exampleValue: '150000',
-          required: false,
-          urlParam: false
-        }
-      ]
+           label: 'address',
+           exampleValue: 'tex1qw08xw2arl6w0dwurhnalrn936fwutmy43d0336',
+           required: true,
+           urlParam: false
+        }  
+      ]  
     },
     bisq: {
-      description: "<p>Returns the past <code>n</code> blocks with BSQ transactions starting <code>m</code> blocks ago.</p><p>Assume a block height of 700,000. Query <code>/blocks/0/10</code> for the past 10 blocks before 700,000 with BSQ transactions. Query <code>/blocks/1000/10</code> for the past 10 blocks before 699,000 with BSQ transactions.",
-      codeTemplates: {
-        curl: {
-          template: `/blocks%{1}%{2}`
-        },
-        commonjs: {
-          template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
-        },
-        esmodule: {
-          template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); console.log(getBlocks);`
-        }
-      },
       parameters: [
         {
-          label: 'm',
-          exampleValue: 0,
-          required: true,
-          urlParam: false
-        },
-        {
-          label: 'n',
-          exampleValue: 5,
-          required: true,
-          urlParam: false
-        }
-      ]
+           label: 'address',
+           exampleValue: 'B1DgwRN92rdQ9xpEVCdXRfgeqGw9X4YtrZz',
+           required: true,
+           urlParam: false
+        }  
+      ],
+      responseSettings: {
+        maxArrayLength: 1
+      }
     }
-  }
+  },
+  
+
+
+  
+  // {
+  //   type: "endpoint",
+  //   category: "blocks",
+  //   httpRequestMethod: "GET",
+  //   fragment: "get-blocks",
+  //   title: "GET Blocks",
+  //   showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),
+  //   showCodeExamples: showCodeExamples,
+  //   description: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
+  //   codeTemplates: {
+  //     curl: {
+  //       template: `/v1/blocks%{1}`
+  //     },
+  //     commonjs: {
+  //       template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
+  //     },
+  //     esmodule: {
+  //       template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);`
+  //     }
+  //   },
+  //   parameters: [
+  //     {
+  //       label: 'startHeight',
+  //       exampleValue: '730000',
+  //       required: false,
+  //       urlParam: false
+  //     }
+  //   ],
+  //   responseSettings: {
+  //     freeze: true,
+  //     maxArrayLength: 1
+  //   },
+  //   testnet: {
+  //     parameters: [
+  //       {
+  //         label: 'startHeight',
+  //         exampleValue: '2091187',
+  //         required: false,
+  //         urlParam: false
+  //       }
+  //     ]
+  //   },
+  //   signet: {
+  //     parameters: [
+  //       {
+  //         label: 'startHeight',
+  //         exampleValue: '53783',
+  //         required: false,
+  //         urlParam: false
+  //       }
+  //     ]
+  //   },
+  //   liquid: {
+  //     description: "Returns details on the past 10 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned.",
+  //     codeTemplates: {
+  //       curl: {
+  //         template: `/blocks%{1}`
+  //       },
+  //     },
+  //     parameters: [
+  //       {
+  //         label: 'startHeight',
+  //         exampleValue: '1472246',
+  //         required: false,
+  //         urlParam: false
+  //       }
+  //     ]
+  //   },
+  //   liquidtestnet: {
+  //     description: "Returns details on the past 10 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned.",
+  //     codeTemplates: {
+  //       curl: {
+  //         template: `/blocks%{1}`
+  //       },
+  //     },
+  //     parameters: [
+  //       {
+  //         label: 'startHeight',
+  //         exampleValue: '150000',
+  //         required: false,
+  //         urlParam: false
+  //       }
+  //     ]
+  //   },
+  //   bisq: {
+  //     description: "<p>Returns the past <code>n</code> blocks with BSQ transactions starting <code>m</code> blocks ago.</p><p>Assume a block height of 700,000. Query <code>/blocks/0/10</code> for the past 10 blocks before 700,000 with BSQ transactions. Query <code>/blocks/1000/10</code> for the past 10 blocks before 699,000 with BSQ transactions.",
+  //     codeTemplates: {
+  //       curl: {
+  //         template: `/blocks%{1}%{2}`
+  //       },
+  //       commonjs: {
+  //         template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
+  //       },
+  //       esmodule: {
+  //         template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); console.log(getBlocks);`
+  //       }
+  //     },
+  //     parameters: [
+  //       {
+  //         label: 'm',
+  //         exampleValue: 0,
+  //         required: true,
+  //         urlParam: false
+  //       },
+  //       {
+  //         label: 'n',
+  //         exampleValue: 5,
+  //         required: true,
+  //         urlParam: false
+  //       }
+  //     ]
+  //   }
+  // }
 
 
 ];

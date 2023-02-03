@@ -19,7 +19,7 @@ let url = '';
 
 loadLanguages( ['json', 'bash'] ) ; //for prism syntax highlighting; javascript is loaded by default
 
-//get existing data
+console.log( "\ngetting rest api docs data --------------------->\n" );
 
 restDocs.forEach( function(e) {
     
@@ -53,34 +53,50 @@ restDocs.forEach( function(e) {
                 formattedData[e.fragment][n]['esmoduleHighlighted'] = Prism.highlight( formattedData[e.fragment][n]['esmodule'], Prism.languages.javascript, 'javascript' );
             }
 
+            console.log( 'working on response for ' + e.fragment + ' / ' + n );
             if( merged.responseSettings.hasOwnProperty('explicit') && merged.responseSettings.explicit.length > 0 ) {
+                console.log( 'attempting to use explicitly set string for ' + e.fragment + ' / ' + n );
                 formattedData[e.fragment][n]['response'] = JSON.stringify( JSON.parse(merged.responseSettings.explicit ), undefined, 2 );
                 formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( JSON.parse( merged.responseSettings.explicit ), undefined, 2 ), Prism.languages.json, 'json');
                 writeTsFile( formattedData );
+                console.log( 'successfully saved response for ' + e.fragment + ' / ' + n + ' (used explicit string) ✅' );
             } else {
-                if( ( mode === 'force-reset-all' ) || ( ( ( typeof mode === 'undefined' ) || ( mode === merged.fragment ) ) && !merged.responseSettings.freeze ) ) {
+
+                console.log( e.fragment + ' / ' + n + ' is not explicitly set' );
+
+                if( restDocsCode.hasOwnProperty(e.fragment) && restDocsCode[e.fragment].hasOwnProperty(n) && restDocsCode[e.fragment][n].hasOwnProperty('response') ) {
+                    console.log( e.fragment + ' / ' + n + ' is cached' );
+                    formattedData[e.fragment][n]['response'] = restDocsCode[e.fragment][n]['response'];
+                    formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( restDocsCode[e.fragment][n]['response'], Prism.languages.json, 'json');
+                    console.log( 'saved response for ' + e.fragment + ' / ' + n + ' (used cached string) ✅' );
+                } else {
+                    formattedData[e.fragment][n]['response'] = '';
+                    formattedData[e.fragment][n]['responseHighlighted'] = '';
+                }
+
+                if( ( mode === 'force-reset-all' ) || ( ( ( typeof mode === 'undefined' ) || ( mode === merged.fragment ) ) && !merged.responseSettings.freeze ) || formattedData[e.fragment][n]['response'].length === 0 ) {
+                    console.log( 'attempting to fetch ' + e.fragment + ' / ' + n + ' from live api' );
                     url = getUrl( n, merged.codeTemplates.curl.text );
                     (function(maxArrayLength){
                         request( url, function( error, response, body ) {
                             if( error ) {
-                                console.log( '\n\nERROR FETCHING ' + url + ' -->\n\n' + JSON.stringify(error) + '\n\n' );
+                                console.log( 'error fetching ' + e.fragment + ' / ' + n + ' from live api ❌\n\n' + error );
                             } else {
+                                console.log( 'successfully fetched ' + e.fragment + ' / ' + n + ' from live api' );
                                 responseObj = JSON.parse(body);
                                 truncateJSON( responseObj, maxArrayLength );
                                 formattedData[e.fragment][n]['response'] = JSON.stringify( responseObj, undefined, 2 );
                                 formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( responseObj, undefined, 2 ), Prism.languages.json, 'json');
                                 writeTsFile( formattedData );
+                                console.log( 'successfully saved response for ' + e.fragment + ' / ' + n + ' (used live api fetch) ✅' );
                             }
                         });
                     })(merged.responseSettings.maxArrayLength);
-                } else {
-                    if( restDocsCode[e.fragment][n].hasOwnProperty('response') ) {
-                        formattedData[e.fragment][n]['response'] = restDocsCode[e.fragment][n]['response'];
-                        formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( restDocsCode[e.fragment][n]['response'], Prism.languages.json, 'json');
-                    }
-                    writeTsFile( formattedData );
                 }
+                
+                writeTsFile( formattedData ); 
             }
+            console.log( '\n' );
         });
     }
 });
@@ -113,7 +129,7 @@ function wrapCommonJS( item, network ) {
 }
 
 function normalizeHosts( text, network ) {
-
+    
     if( network === 'mainnet' || network === 'liquid' || network === 'bisq' ) {
         text = text.replace('mempoolJS();', `mempoolJS({ hostname: "%{DOCUMENT_LOCATION_HOST}" });`);
     } else {
@@ -131,7 +147,6 @@ function normalizeHosts( text, network ) {
             return text.replace('} = mempoolJS({', ` = bisqJS({`);
         }
     }
-
 }
 
 function wrapEsModule( item, network ) {
@@ -167,6 +182,10 @@ function getMergedItem( item, network ) {
                     for( let k2 in item[ network ]['codeTemplates'] ) {
                         merged['codeTemplates'][k2] = item[ network ][k1][k2];  
                     }
+                } else if( k1 === 'responseSettings' ) {
+                    for( let k2 in item[ network ]['responseSettings'] ) {
+                        merged['responseSettings'][k2] = item[ network ][k1][k2];  
+                    }
                 } else {
                     merged[k1] = item[ network ][k1];
                 }
@@ -193,7 +212,7 @@ function processParameters( merged ) {
 
 function insertCurlParameters( templateText, parameters, display ) {
     for( let i = 0; i < parameters.length; i++ ) {
-        templateText = templateText.replace( '%{' + (i+1) + '}', `${ !display || parameters[i]['required'] ? '' : '[' }${ parameters[i]['urlParam'] ? '' : '/' }${ display ? ':' + parameters[i]['label'] : parameters[i]['exampleValue'] }${ !display || parameters[i]['required'] ? '' : ']' }` );
+        templateText = templateText.replace( '%{' + (i+1) + '}', `${ !display || parameters[i]['required'] || parameters[i]['urlParam'] ? '' : '[' }${ parameters[i]['urlParam'] ? '' : '/' }${ display ? ':' + parameters[i]['label'] : parameters[i]['exampleValue'] }${ !display || parameters[i]['required'] || parameters[i]['urlParam'] ? '' : ']' }` );
     }
     return templateText;
 }
