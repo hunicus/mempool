@@ -60,17 +60,19 @@ restDocs.forEach( function(e) {
             } else {
                 if( ( mode === 'force-reset-all' ) || ( ( ( typeof mode === 'undefined' ) || ( mode === merged.fragment ) ) && !merged.responseSettings.freeze ) ) {
                     url = getUrl( n, merged.codeTemplates.curl.text );
-                    request( url, function( error, response, body ) {
-                        if( error ) {
-                            console.log( '\n\nERROR FETCHING ' + url + ' -->\n\n' + error + '\n\n' );
-                        } else {
-                            responseObj = JSON.parse(body);
-                            truncateJSON( responseObj );
-                            formattedData[e.fragment][n]['response'] = JSON.stringify( responseObj, undefined, 2 );
-                            formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( responseObj, undefined, 2 ), Prism.languages.json, 'json');
-                            writeTsFile( formattedData );
-                        }
-                    });
+                    (function(maxArrayLength){
+                        request( url, function( error, response, body ) {
+                            if( error ) {
+                                console.log( '\n\nERROR FETCHING ' + url + ' -->\n\n' + JSON.stringify(error) + '\n\n' );
+                            } else {
+                                responseObj = JSON.parse(body);
+                                truncateJSON( responseObj, maxArrayLength );
+                                formattedData[e.fragment][n]['response'] = JSON.stringify( responseObj, undefined, 2 );
+                                formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( responseObj, undefined, 2 ), Prism.languages.json, 'json');
+                                writeTsFile( formattedData );
+                            }
+                        });
+                    })(merged.responseSettings.maxArrayLength);
                 } else {
                     if( restDocsCode[e.fragment][n].hasOwnProperty('response') ) {
                         formattedData[e.fragment][n]['response'] = restDocsCode[e.fragment][n]['response'];
@@ -179,17 +181,26 @@ function processParameters( merged ) {
     for( let k in merged.codeTemplates ) {
         if( merged['codeTemplates'][k].hasOwnProperty('template') ) {
             if( k === 'curl' ) {
-                merged.codeTemplates[k]['textDisplay'] = ( merged.hasOwnProperty('parameters') && merged.parameters.labels.length > 0 ? insertParameters( merged.codeTemplates[k]['template'], merged.parameters.labels, true ) : merged.codeTemplates[k].template );
+                merged.codeTemplates[k]['text'] = ( merged.hasOwnProperty('parameters') && merged.parameters.length > 0 ? insertCurlParameters( merged.codeTemplates[k]['template'], merged.parameters, false ) : merged.codeTemplates[k].template );
+                merged.codeTemplates[k]['textDisplay'] = ( merged.hasOwnProperty('parameters') && merged.parameters.length > 0 ? insertCurlParameters( merged.codeTemplates[k]['template'], merged.parameters, true ) : merged.codeTemplates[k].template );
+            } else {
+                merged.codeTemplates[k]['text'] = ( merged.hasOwnProperty('parameters') && merged.parameters.length > 0 ? insertCodeParameters( merged.codeTemplates[k]['template'], merged.parameters, false ) : merged.codeTemplates[k].template );
             }
-            merged.codeTemplates[k]['text'] = ( merged.hasOwnProperty('parameters') && merged.parameters.exampleValues.length > 0 ? insertParameters( merged.codeTemplates[k]['template'], merged.parameters.exampleValues, false ) : merged.codeTemplates[k].template );
         }
     }
     return merged.codeTemplates;
 }
 
-function insertParameters( templateText, parameters, isCurl ) {
+function insertCurlParameters( templateText, parameters, display ) {
     for( let i = 0; i < parameters.length; i++ ) {
-        templateText = templateText.replace( ( isCurl ? '/' : '' ) + '%{' + (i+1) + '}', parameters[i] );
+        templateText = templateText.replace( '%{' + (i+1) + '}', `${ !display || parameters[i]['required'] ? '' : '[' }${ parameters[i]['urlParam'] ? '' : '/' }${ display ? ':' + parameters[i]['label'] : parameters[i]['exampleValue'] }${ !display || parameters[i]['required'] ? '' : ']' }` );
+    }
+    return templateText;
+}
+
+function insertCodeParameters( templateText, parameters ) {
+    for( let i = 0; i < parameters.length; i++ ) {
+        templateText = templateText.replace( '%{' + (i+1) + '}', parameters[i]['exampleValue'] );
     }
     return templateText;
 }
@@ -217,19 +228,19 @@ function getUrl( network, path ) {
     }
 }
 
-function truncateJSON( value ) {
+function truncateJSON( value, maxArrayLength=2 ) {
     if( typeof value === 'object' ) {
         if( Array.isArray( value ) ) {
-            if( value.length > 2 && ( typeof value[0] === 'object' ) ) {
-                value.length = 2;
-                value.push( { "...": "..." } );
+            if( value.length > maxArrayLength ) {
+                value.length = maxArrayLength;
+                value.push( "..." );
             }
             value.forEach( function(e) {
-                truncateJSON( e );
+                truncateJSON( e, maxArrayLength );
             });
         } else if( value !== null ) {
             Object.keys(value).forEach(function( k, i ) {
-                truncateJSON( value[k] );
+                truncateJSON( value[k], maxArrayLength );
             });
         }
     }

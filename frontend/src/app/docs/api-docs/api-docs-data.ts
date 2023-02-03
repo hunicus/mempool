@@ -39,7 +39,7 @@
 
     parameters: {
       labels: ['[/:startHeight]'],
-      exampleValues: [730000]
+      exampleValue: [730000]
     },
 
     //PROPERTIES FOR ALL NETWORKS - RESPONSE FETCHING SETTINGS
@@ -56,17 +56,18 @@
 
     //PROPERTIES FOR SIGNET ONLY (EXAMPLE)
     //the following properties override corresponding properties from above when signet is the network
-    //a parameters override, if provided, must specify BOTH labels AND corresponding exampleValues.,,the entire parameters object is overridden, so specifying just exampleValues will NOT work.
+    //a parameters override, if provided, must specify BOTH labels AND corresponding exampleValue.,,the entire parameters object is overridden, so specifying just exampleValue will NOT work.
     //the following responseSettings override results in ONLY signet response being fetched (for other networks, `freeze` is true, as specified above).
 
     signet: {
       parameters: {
         labels: ['[/:startHeight]'],    //brackets indicate parameter is optional
-        exampleValues: [53783]
+        exampleValue: [53783]
       },
       responseSettings: {
         freeze: false,
-        explicit: '{ "btc": "hodl" }' //specify a response to use in place of fetching one from the server; this property is optional.
+        explicit: '{ "btc": "hodl", "usd": "shitcoin" }', //specify a response to use in place of fetching one from the server; this property is optional.
+        maxArrayLength: 2 //all arrays in response are automatically (and recursively) truncated to a length of 2; specify a maximum array length if desired.
       },
     },
 
@@ -91,7 +92,7 @@
       },
       parameters: {
         labels: ['/:m', '/:n'], //no brackets means parameter is required
-        exampleValues: [0,5]
+        exampleValue: [0,5]
       }
     }
 
@@ -301,7 +302,39 @@ export const restApiDocsData = [
       explicit: `{ "BTC": { "code": "BTC", "name": "Bitcoin", "precision": 8, "_type": "crypto" }, "USD": { "code": "USD", "name": "US Dollar", "precision": 8, "_type": "fiat" }, "...": "..." }`
     }
   },
-
+  {
+    type: "endpoint",
+    category: "markets",
+    httpRequestMethod: "GET",
+    fragment: "get-market-depth",
+    title: "GET Market Depth",
+    showConditions: ["bisq"],
+    showCodeExamples: showCodeExamples,
+    description: "Provides list of open offer prices for a single market.",
+    codeTemplates: {
+      curl: {
+        template: `/depth?market=%{1}`
+      },
+      commonjs: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const depth = await markets.getDepth({ market }); document.getElementById(\"result\").textContent = JSON.stringify(depth, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { markets } } = mempoolJS(); const market = \"%{1}\"; const depth = await markets.getDepth({ market }); console.log(depth);"
+      }
+    },
+    parameters: [
+      {
+        label: 'market',
+        exampleValue: 'BTC_USD',
+        required: true,
+        urlParam: true
+      }
+    ],
+    responseSettings: {
+      freeze: true,
+      maxArrayLength: 5
+    }
+  },
 
 
 
@@ -317,7 +350,7 @@ export const restApiDocsData = [
     description: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
     codeTemplates: {
       curl: {
-        template: `/v1/blocks/%{1}`
+        template: `/v1/blocks%{1}`
       },
       commonjs: {
         template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
@@ -326,55 +359,75 @@ export const restApiDocsData = [
         template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);`
       }
     },
-    parameters: {
-      labels: ['[/:startHeight]'],
-      exampleValues: [730000]
-    },
+    parameters: [
+      {
+        label: 'startHeight',
+        exampleValue: '730000',
+        required: false,
+        urlParam: false
+      }
+    ],
     responseSettings: {
       freeze: true,
-      explicit: ''
+      maxArrayLength: 1
     },
     testnet: {
-      parameters: {
-        labels: ['[/:startHeight]'],
-        exampleValues: [2091187]
-      }
+      parameters: [
+        {
+          label: 'startHeight',
+          exampleValue: '2091187',
+          required: false,
+          urlParam: false
+        }
+      ]
     },
     signet: {
-      parameters: {
-        labels: ['[/:startHeight]'],
-        exampleValues: [53783]
-      }
+      parameters: [
+        {
+          label: 'startHeight',
+          exampleValue: '53783',
+          required: false,
+          urlParam: false
+        }
+      ]
     },
     liquid: {
       description: "Returns details on the past 10 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned.",
       codeTemplates: {
         curl: {
-          template: `/blocks/%{1}`
+          template: `/blocks%{1}`
         },
       },
-      parameters: {
-        labels: ['[/:startHeight]'],
-        exampleValues: [1472246]
-      }
+      parameters: [
+        {
+          label: 'startHeight',
+          exampleValue: '1472246',
+          required: false,
+          urlParam: false
+        }
+      ]
     },
     liquidtestnet: {
       description: "Returns details on the past 10 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned.",
       codeTemplates: {
         curl: {
-          template: `/blocks/%{1}`
+          template: `/blocks%{1}`
         },
       },
-      parameters: {
-        labels: ['[/:startHeight]'],
-        exampleValues: [150000]
-      }
+      parameters: [
+        {
+          label: 'startHeight',
+          exampleValue: '150000',
+          required: false,
+          urlParam: false
+        }
+      ]
     },
     bisq: {
       description: "<p>Returns the past <code>n</code> blocks with BSQ transactions starting <code>m</code> blocks ago.</p><p>Assume a block height of 700,000. Query <code>/blocks/0/10</code> for the past 10 blocks before 700,000 with BSQ transactions. Query <code>/blocks/1000/10</code> for the past 10 blocks before 699,000 with BSQ transactions.",
       codeTemplates: {
         curl: {
-          template: `/blocks/%{1}/%{2}`
+          template: `/blocks%{1}%{2}`
         },
         commonjs: {
           template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); document.getElementById("result").textContent = JSON.stringify(getBlocks, undefined, 2);`
@@ -383,10 +436,20 @@ export const restApiDocsData = [
           template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); console.log(getBlocks);`
         }
       },
-      parameters: {
-        labels: ['/:m', '/:n'],
-        exampleValues: [0,5]
-      }
+      parameters: [
+        {
+          label: 'm',
+          exampleValue: 0,
+          required: true,
+          urlParam: false
+        },
+        {
+          label: 'n',
+          exampleValue: 5,
+          required: true,
+          urlParam: false
+        }
+      ]
     }
   }
 
