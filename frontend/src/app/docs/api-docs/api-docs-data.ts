@@ -491,7 +491,219 @@ export const restApiDocsData = [
       }
     }
   },
-  
+  {
+    type: "endpoint",
+    category: "addresses",
+    httpRequestMethod: "GET",
+    fragment: "get-address-transactions",
+    title: "GET Address Transactions",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Get transaction history for the specified address/scripthash, sorted with newest first. Returns up to 50 mempool transactions plus the first 25 confirmed transactions. You can request more confirmed transactions using <code>:last_seen_txid</code> (see below).",
+    codeTemplates: {
+      curl: {
+        template: "/address%{1}/txs"
+      },
+      commonjs: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const addressTxs = await addresses.getAddressTxs({ address }); document.getElementById(\"result\").textContent = JSON.stringify(addressTxs, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const addressTxs = await addresses.getAddressTxs({ address }); console.log(addressTxs);"
+      }
+    },
+    responseSettings: {
+      maxArrayLength: 1
+    },
+    parameters: [
+      {
+         label: 'address',
+         exampleValue: '1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    testnet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'tb1qp0we5epypgj4acd2c4au58045ruud2pd6heuee',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'tb1qs45jstr4s34gjr8vnttlpzpw9qc5vvr4nylxyw',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquid: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'Go65t19hP2FuhBMYtgbdMDgdmEzNwh1i48',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'vjTwFjtVE7Fy9gjwQSxas9FkrqcnK1SeobPkdD9tghdNmCvxoXhSeCjpgD3ponKJukkD2BNPX25dZL48',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "endpoint",
+    category: "addresses",
+    httpRequestMethod: "GET",
+    fragment: "get-address-transactions-chain",
+    title: "GET Address Transactions Chain",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Get confirmed transaction history for the specified address/scripthash, sorted with newest first. Returns 25 transactions per page. More can be requested by specifying the last txid seen by the previous query.",
+    codeTemplates: {
+      curl: {
+        template: "/address%{1}/txs/chain"
+      },
+      commonjs: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const addressTxsChain = await addresses.getAddressTxsChain({ address }); document.getElementById(\"result\").textContent = JSON.stringify(addressTxsChain, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const addressTxsChain = await addresses.getAddressTxsChain({ address }); console.log(addressTxsChain);"
+      }
+    },
+    responseSettings: {
+      maxArrayLength: 1
+    },
+    parameters: [
+      {
+         label: 'address',
+         exampleValue: '1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    testnet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'tb1qp0we5epypgj4acd2c4au58045ruud2pd6heuee',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'tb1qs45jstr4s34gjr8vnttlpzpw9qc5vvr4nylxyw',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquid: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'Go65t19hP2FuhBMYtgbdMDgdmEzNwh1i48',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'vjTwFjtVE7Fy9gjwQSxas9FkrqcnK1SeobPkdD9tghdNmCvxoXhSeCjpgD3ponKJukkD2BNPX25dZL48',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    }
+  },
+  {
+    type: "endpoint",
+    category: "addresses",
+    httpRequestMethod: "GET",
+    fragment: "get-address-transactions-mempool",
+    title: "GET Address Transactions Mempool",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Get unconfirmed transaction history for the specified address/scripthash. Returns up to 50 transactions (no paging).",
+    codeTemplates: {
+      curl: {
+        template: "/address%{1}/txs/mempool"
+      },
+      commonjs: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const addressTxsMempool = await addresses.getAddressTxsMempool({ address }); document.getElementById(\"result\").textContent = JSON.stringify(addressTxsMempool, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const addressTxsMempool = await addresses.getAddressTxsMempool({ address }); console.log(addressTxsMempool);"
+      }
+    },
+    parameters: [
+      {
+         label: 'address',
+         exampleValue: 'bc1qnhldqku6hsne8snapptklmsv66cjumkw4eezpa8awrwzpjv4n3aqj4jj4n',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    testnet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'tb1qp0we5epypgj4acd2c4au58045ruud2pd6heuee',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: '',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquid: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: '',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: '',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+  },
 
 
   

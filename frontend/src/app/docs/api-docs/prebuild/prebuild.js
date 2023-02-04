@@ -11,13 +11,11 @@ const restDocs = apiDocs.restApiDocsData;
 const restDocsCode = apiDocsResponses.restApiDocsCode;
 const mode = process.argv;
 const networks = ["mainnet", "testnet", "signet", "liquid", "liquidtestnet", "bisq"];
-const apiQueryDelay = 1000;
 
 let formattedData = {};
 let responseObj = {};
 let merged = {};
 let url = '';
-let fetchCounter = 0;
 
 loadLanguages( ['json', 'bash'] ) ; //for prism syntax highlighting; javascript is loaded by default
 
@@ -55,6 +53,8 @@ restDocs.forEach( function(e) {
                 formattedData[e.fragment][n]['esmoduleHighlighted'] = Prism.highlight( formattedData[e.fragment][n]['esmodule'], Prism.languages.javascript, 'javascript' );
             }
 
+            //get responses
+            
             console.log( 'working on response for ' + e.fragment + ' / ' + n );
             if( merged.hasOwnProperty('responseSettings') && merged.responseSettings.hasOwnProperty('explicit') && merged.responseSettings.explicit.length > 0 ) {
                 console.log( 'attempting to use explicitly set string for ' + e.fragment + ' / ' + n );
@@ -76,32 +76,30 @@ restDocs.forEach( function(e) {
                     formattedData[e.fragment][n]['responseHighlighted'] = '';
                 }
 
-                if( ( mode[2] === 'force-reset-all' ) || ( formattedData[e.fragment][n]['response'].length === 0 ) || ( mode[2] === merged.fragment && mode[3] === 'all' ) || ( mode[2] === merged.fragment && mode[3] === n ) ) {
-                    fetchCounter++;
-                    console.log( 'attempting to fetch ' + e.fragment + ' / ' + n + ' from live api (delay of ' + (fetchCounter*2) + ' seconds)' );
+                if( ( mode[2] === 'force-reset-all' ) || ( mode[2] === merged.fragment && typeof mode[3] === 'undefined' ) || ( mode[2] === merged.fragment && mode[3] === n ) || ( typeof mode[2] === 'undefined' && typeof mode[3] === 'undefined' && ( formattedData[e.fragment][n]['response'].length === 0 ) ) ) {
+                    console.log( 'attempting to fetch ' + e.fragment + ' / ' + n + ' from live api' );
                     url = getUrl( n, merged.codeTemplates.curl.text );
                     (function(maxArrayLength){
-                        setTimeout( function() {
-                            request( url, function( error, response, body ) {
-                                if( error ) {
-                                    console.log( 'error fetching ' + e.fragment + ' / ' + n + ' from live api ❌\n\n' + error );
-                                } else {
-                                    console.log( 'successfully fetched ' + e.fragment + ' / ' + n + ' from live api' );
-                                    responseObj = JSON.parse(body);
-                                    truncateJSON( responseObj, maxArrayLength );
-                                    formattedData[e.fragment][n]['response'] = JSON.stringify( responseObj, undefined, 2 );
-                                    formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( responseObj, undefined, 2 ), Prism.languages.json, 'json');
-                                    writeTsFile( formattedData );
-                                    console.log( 'successfully saved response for ' + e.fragment + ' / ' + n + ' (used live api fetch) ✅' );
-                                }
-                            });
-                        }, fetchCounter*2000 );
+                        request( url, function( error, response, body ) {
+                            if( error ) {
+                                console.log( 'error fetching ' + e.fragment + ' / ' + n + ' from live api ❌\n\n' + error );
+                            } else {
+                                console.log( 'successfully fetched ' + e.fragment + ' / ' + n + ' from live api' );
+                                responseObj = JSON.parse(body);
+                                truncateJSON( responseObj, maxArrayLength );
+                                formattedData[e.fragment][n]['response'] = JSON.stringify( responseObj, undefined, 2 );
+                                formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( responseObj, undefined, 2 ), Prism.languages.json, 'json');
+                                writeTsFile( formattedData );
+                                console.log( 'successfully saved response for ' + e.fragment + ' / ' + n + ' (used live api fetch) ✅' );
+                            }
+                        });
                     })(merged.responseSettings.maxArrayLength);
                 }
                 
                 writeTsFile( formattedData ); 
             }
             console.log( '\n' );
+
         });
     }
 });
