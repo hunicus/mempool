@@ -8,7 +8,7 @@ tsc ../api-docs-code.ts
 # passing no parameter will get responses for all endpoints where freeze=false
 # pass 'force-reset-all' to get responses for all endpoints (except those where skip=true)
 # pass '<fragment>' to get responses for specific endpoint
-node prebuild.js $1
+node prebuild.js $1 $2
 
 rm ../api-docs-data.js
 rm ../api-docs-code.js

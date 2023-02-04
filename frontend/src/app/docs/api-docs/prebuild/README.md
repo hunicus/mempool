@@ -63,7 +63,6 @@
     //structure, etc.
 
     responseSettings: {
-      freeze: true,
       explicit: ''
     },
 
@@ -86,7 +85,6 @@
         }
       ],
       responseSettings: {                                   //can override single properties (e.g. specify only maxArrayLength for a network and have all other responseSettings from parent apply)
-        freeze: false,                                      //new response will not be fetched for signet; value in api-docs-code.ts will be used instead.
         explicit: '{ "btc": "hodl", "usd": "shitcoin" }',   //specify a response to use in place of fetching one from the server; this property is optional. if specified, freeze and maxArrayLength are ignored.
         maxArrayLength: 2                                   //all arrays in response are automatically (and recursively) truncated to a length of 2; specify a maximum array length if desired.
       },

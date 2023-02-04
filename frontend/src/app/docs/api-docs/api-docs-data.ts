@@ -139,9 +139,6 @@ export const restApiDocsData = [
       esmodule: {
         template: `const { %{0}: { difficulty } } = mempoolJS(); const difficultyAdjustment = await difficulty.getDifficultyAdjustment(); console.log(difficultyAdjustment);`
       }
-    },
-    responseSettings: {
-      freeze: true
     }
   },
   {
@@ -163,10 +160,7 @@ export const restApiDocsData = [
       esmodule: {
         template: `const { %{0}: { statistics } } = mempoolJS(); const stats = await statistics.getStats(); console.log(stats);`
       }
-    },
-    responseSettings: {
-      freeze: true
-    } 
+    }
   },
   {
     type: "category",
@@ -228,7 +222,6 @@ export const restApiDocsData = [
       }
     ],
     responseSettings: {
-      freeze: true,
       maxArrayLength: 5
     }
   },
@@ -259,10 +252,7 @@ export const restApiDocsData = [
          required: true,
          urlParam: true
       }  
-    ],  
-    responseSettings: {
-      freeze: true
-    }
+    ]
   },
   {
     type: "endpoint",
@@ -315,10 +305,7 @@ export const restApiDocsData = [
          required: true,
          urlParam: true
       }  
-    ],  
-    responseSettings: {
-      freeze: true
-    }
+    ]
   },
   {
     type: "endpoint",
@@ -384,10 +371,7 @@ export const restApiDocsData = [
         required: false,
         urlParam: true
      }
-    ],  
-    responseSettings: {
-      freeze: true
-    }
+    ]
   },
   {
     type: "endpoint",
@@ -416,10 +400,7 @@ export const restApiDocsData = [
          required: true,
          urlParam: true
       }  
-    ],  
-    responseSettings: {
-      freeze: true
-    }
+    ]
   },
   {
     type: "category",
@@ -455,10 +436,7 @@ export const restApiDocsData = [
          required: true,
          urlParam: false
       }  
-    ],  
-    responseSettings: {
-      freeze: true
-    },
+    ],
     testnet: {
       parameters: [
         {
@@ -546,7 +524,6 @@ export const restApiDocsData = [
   //     }
   //   ],
   //   responseSettings: {
-  //     freeze: true,
   //     maxArrayLength: 1
   //   },
   //   testnet: {
