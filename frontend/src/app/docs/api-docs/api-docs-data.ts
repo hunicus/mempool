@@ -655,10 +655,13 @@ export const restApiDocsData = [
         template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const addressTxsMempool = await addresses.getAddressTxsMempool({ address }); console.log(addressTxsMempool);"
       }
     },
+    responseSettings: {
+      maxArrayLength: 1
+    },
     parameters: [
       {
          label: 'address',
-         exampleValue: 'bc1qnhldqku6hsne8snapptklmsv66cjumkw4eezpa8awrwzpjv4n3aqj4jj4n',
+         exampleValue: 'bc1q7cyrfmck2ffu2ud3rn5l5a8yv6f0chkp0zpemf',
          required: true,
          urlParam: false
       }  
@@ -667,7 +670,7 @@ export const restApiDocsData = [
       parameters: [
         {
            label: 'address',
-           exampleValue: 'tb1qp0we5epypgj4acd2c4au58045ruud2pd6heuee',
+           exampleValue: 'tb1qhpv2m3jgh79x3atlzj5lwz8xxe5dpull4jdqe9',
            required: true,
            urlParam: false
         }  
@@ -677,7 +680,7 @@ export const restApiDocsData = [
       parameters: [
         {
            label: 'address',
-           exampleValue: '',
+           exampleValue: 'tb1q7kf9gytkpuu5nwkmnjgqx6g4rdncq7v4uy9qly',
            required: true,
            urlParam: false
         }  
@@ -687,7 +690,7 @@ export const restApiDocsData = [
       parameters: [
         {
            label: 'address',
-           exampleValue: '',
+           exampleValue: 'H1bvbKJff1UEKQ6aPjTLCYgaSezuJ4Xz1Q',
            required: true,
            urlParam: false
         }  
@@ -697,7 +700,7 @@ export const restApiDocsData = [
       parameters: [
         {
            label: 'address',
-           exampleValue: '',
+           exampleValue: 'tex1qyu558n4hn04qph5nukje5y5wyp3vd9rl3nenmh',
            required: true,
            urlParam: false
         }  
