@@ -220,6 +220,12 @@
   <p>For unconfirmed CPFP transactions, Mempool will show the effective feerate (along with descendent & ancestor transaction information) on the transaction page. For confirmed transactions, CPFP relationships are not stored, so this additional information is not shown.</p>
 </ng-template>
 
+<ng-template type="what-is-difference-between-mb-mvb-memory">
+  <p>The MB number you see on a block refers to the size of that block in megabytes, i.e. how much space that block takes up on disk. Add up the byte-denominated size of all of transactions in a block and you will get this number.</p>
+  <p>The MvB number you see in the fee chart refers to the sum of the vbyte-denominated weights of all transactions in the mempool. This is why the sum of all mempool block MB values does not correspond with the MvB figure on the fee graph—the former is an aggregate megabyte value, and the latter is an aggregate virtual megabyte value.</p>
+  <p>The memory usage of a Bitcoin node is an entirely different concept—it refers to the actual memory usage of the machine running Bitcoin Core for mempool functions. This is related to the number of pending transactions—the more transactions in the mempool, the higher memory usage will be—but memory usage will always be higher than the aggregate byte value of pending transactions because the data in memory also includes data for indexes, pointers, memory allocation, and other overhead.</p>
+</ng-template>
+
 <ng-template type="how-do-block-audits-work">
   <p>A block audit visually compares Mempool's expected block to the actual block for a particular block height.</p>
   <p>How is the expected block determined? Mempool monitors its view of the mempool and runs a re-implementation of Bitcoin Core's transaction selection algorithm to determine the transactions it expects to see in upcoming blocks (<a href="https://github.com/mempool/mempool/blob/master/backend/src/api/mempool-blocks.ts" target="_blank">source code here</a>). Since there is a continual flow of new transactions, this algorithm runs every 2 seconds, and as a result, you will see the transactions <a href="/mempool-block/0">projected to be in upcoming blocks</a> change in near real-time.</p>

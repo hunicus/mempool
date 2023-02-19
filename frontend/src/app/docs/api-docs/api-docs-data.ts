@@ -8671,6 +8671,13 @@ export const faqData = [
     type: "endpoint",
     category: "advanced",
     showConditions: bitcoinNetworks,
+    fragment: "what-is-difference-between-mb-mvb-memory",
+    title: "What is the difference between total MB of mempool blocks, MvB on the fee graph, and memory usage?",
+  },
+  {
+    type: "endpoint",
+    category: "advanced",
+    showConditions: bitcoinNetworks,
     options: { auditOnly: true },
     fragment: "how-do-block-audits-work",
     title: "How do block audits work?",
