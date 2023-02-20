@@ -53,7 +53,7 @@ export class BytesPipe implements PipeTransform {
     }
 
     static formatResult(result: number, unit: string): string {
-        return `${result} <span class="symbol">${unit}</span>`;
+        return `${result.toString().padEnd(4,'0')} <span class="symbol">${unit}</span>`;
     }
 
     static calculateResult(format: { max: number, prev?: ByteUnit }, bytes: number) {
