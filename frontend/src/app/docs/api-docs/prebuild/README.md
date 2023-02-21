@@ -66,6 +66,9 @@
       ],
       responseSettings: {                                   //properties specified here override responseSettings properties from above
         explicit: '{ "btc": "hodl", "usd": "shitcoin" }',   //specify a response to use in place of fetching one from the server
+        options: {
+            json: false                                     //default is true; specify as false to avoid parsing response as json
+        }
         maxArrayLength: 3                                   //all arrays in response are automatically (and recursively) truncated to the specified length (default is 2)
       },
     },

@@ -58,8 +58,13 @@ restDocs.forEach( function(e) {
             console.log( 'working on response for ' + e.fragment + ' / ' + n );
             if( merged.hasOwnProperty('responseSettings') && merged.responseSettings.hasOwnProperty('explicit') && merged.responseSettings.explicit.length > 0 ) {
                 console.log( 'attempting to use explicitly set string for ' + e.fragment + ' / ' + n );
-                formattedData[e.fragment][n]['response'] = JSON.stringify( JSON.parse(merged.responseSettings.explicit ), undefined, 2 );
-                formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( JSON.parse( merged.responseSettings.explicit ), undefined, 2 ), Prism.languages.json, 'json');
+                if( merged.responseSettings.hasOwnProperty('options') && merged.responseSettings.options.hasOwnProperty('json') && !merged.responseSettings.options.json ) {
+                    formattedData[e.fragment][n]['response'] = merged.responseSettings.explicit;
+                    formattedData[e.fragment][n]['responseHighlighted'] = merged.responseSettings.explicit;
+                } else {
+                    formattedData[e.fragment][n]['response'] = JSON.stringify( JSON.parse(merged.responseSettings.explicit ), undefined, 2 );
+                    formattedData[e.fragment][n]['responseHighlighted'] = Prism.highlight( JSON.stringify( JSON.parse( merged.responseSettings.explicit ), undefined, 2 ), Prism.languages.json, 'json');
+                }
                 writeTsFile( formattedData );
                 console.log( 'successfully saved response for ' + e.fragment + ' / ' + n + ' (used explicit string) ✅' );
             } else {

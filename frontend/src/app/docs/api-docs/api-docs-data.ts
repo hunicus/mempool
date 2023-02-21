@@ -835,7 +835,7 @@ export const restApiDocsData = [
     description: "Returns transactions associated with the specified Liquid asset. For the network's native asset, returns a list of peg in, peg out, and burn transactions. For user-issued assets, returns a list of issuance, reissuance, and burn transactions. Does not include regular transactions transferring this asset.",
     codeTemplates: {
       curl: {
-        template: "/asset/:asset_id/txs[/mempool|/chain]"
+        template: "/asset%{1}/txs"
       },
       commonjs: {
         template: "const { %{0}: { assets } } = mempoolJS(); const asset_id = '%{1}'; const assetTxs = await assets.getAssetTxs({ asset_id, is_mempool: false }); document.getElementById(\"result\").textContent = JSON.stringify(assetTxs, undefined, 2);"
@@ -844,19 +844,213 @@ export const restApiDocsData = [
         template: "const { %{0}: { assets } } = mempoolJS(); const asset_id = '%{1}'; const assetTxs = await assets.getAssetTxs({ asset_id, is_mempool: false }); console.log(assetTxs);"
       }
     },
+    responseSettings: {
+      maxArrayLength: 1
+    },
     parameters: [
       {
-         label: '',
-         exampleValue: '',
+         label: 'asset_id',
+         exampleValue: '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d',
          required: true,
          urlParam: false
       }  
     ],
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'asset_id',
+           exampleValue: 'ac3e0ff248c5051ffd61e00155b7122e5ebc04fd397a0ecbdd4f4e4a56232926',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "endpoint",
+    category: "assets",
+    httpRequestMethod: "GET",
+    fragment: "get-asset-supply",
+    title: "GET Asset Supply",
+    showConditions: liquidNetworks,
+    showCodeExamples: showCodeExamples,
+    description: "Get the current total supply of the specified asset. For the native asset (L-BTC), this is calculated as [chain,mempool]_stats.peg_in_amount - [chain,mempool]_stats.peg_out_amount - [chain,mempool]_stats.burned_amount. For issued assets, this is calculated as [chain,mempool]_stats.issued_amount - [chain,mempool]_stats.burned_amount. Not available for assets with blinded issuances. If /decimal is specified, returns the supply as a decimal according to the asset's divisibility. Otherwise, returned in base units.",
+    codeTemplates: {
+      curl: {
+        template: "/asset%{1}/supply%{2}"
+      },
+      commonjs: {
+        template: "const { %{0}: { assets } } = mempoolJS(); const asset_id = '%{1}'; const assetSupply = await assets.getAssetSupply({ asset_id, decimal: false }); document.getElementById(\"result\").textContent = JSON.stringify(assetSupply, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { assets } } = mempoolJS(); const asset_id = '%{1}'; const assetSupply = await assets.getAssetSupply({ asset_id, decimal: false }); console.log(assetSupply);"
+      }
+    },
+    parameters: [
+      {
+         label: 'asset_id',
+         exampleValue: '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d',
+         required: true,
+         urlParam: false
+      },
+      {
+        label: 'decimal',
+        exampleValue: '',
+        required: false,
+        urlParam: false
+      }  
+    ],
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'asset_id',
+           exampleValue: '05aa9f02a06da37f2a0a572c49ac381499a16a643ad7c70c51ac94560778c92e',
+           required: true,
+           urlParam: false
+        },
+        {
+          label: 'decimal',
+          exampleValue: '',
+          required: false,
+          urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "endpoint",
+    category: "assets",
+    httpRequestMethod: "GET",
+    fragment: "get-asset-icons",
+    title: "GET Asset Icons",
+    showConditions: liquidNetworks,
+    showCodeExamples: showCodeExamples,
+    description: "Get all the Asset IDs that have icons.",
+    codeTemplates: {
+      curl: {
+        template: "/v1/assets/icons"
+      },
+      commonjs: {
+        template: "const { %{0}: { assets } } = mempoolJS(); const assetsIcons = await assets.getAssetsIcons(); document.getElementById(\"result\").textContent = JSON.stringify(assetsIcons, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { assets } } = mempoolJS(); const assetsIcons = await assets.getAssetsIcons(); console.log(assetsIcons);"
+      }
+    },
+    responseSettings: {
+      explicit: `[ "6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d", "ce091c998b83c78bb71a632313ba3760f1763d9cfcffae02258ffa9865a37bd2", "..." ]`
+    },
+    "liquidtestnet": {
+      parameters: {
+        labels: [],
+        exampleValues: []
+      },
+      responseSettings: {
+        explicit: ``
+      },
+    }
+  },
+  {
+    type: "endpoint",
+    category: "assets",
+    httpRequestMethod: "GET",
+    fragment: "get-asset-icon",
+    title: "GET Asset Icon",
+    showConditions: liquidNetworks,
+    showCodeExamples: toggleCodeExampleVisibility({ "liquid": [ true, true, false, false ] }),
+    description: "Get the icon of the specified asset.",
+    codeTemplates: {
+      curl: {
+        template: "/v1/asset%{1}/icon"
+      },
+      commonjs: {
+        template: `<img src="https://liquid.network/api/v1/asset/6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d/icon">`,
+        options: { "noWrap": true }
+      }
+    },
+    responseSettings: {
+      explicit: `PNG`,
+      options: {
+        json: false
+      }
+    },
+    parameters: [
+      {
+         label: 'asset_id',
+         exampleValue: '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    testnet: {
+      parameters: {
+        label: 'asset_id',
+        exampleValue: 'ac3e0ff248c5051ffd61e00155b7122e5ebc04fd397a0ecbdd4f4e4a56232926',
+        required: true,
+        urlParam: false
+      } 
+    }
+  },
+  {
+    type: "category",
+    category: "blocks",
+    fragment: "blocks",
+    title: "Blocks",
+    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"])
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block",
+    title: "GET Block",
+    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),
+    showCodeExamples: showCodeExamples,
+    description: "Returns details about a block.",
+    codeTemplates: {
+      curl: {
+        template: "/block%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const block = await blocks.getBlock({ hash }); document.getElementById(\"result\").textContent = JSON.stringify(block, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const block = await blocks.getBlock({ hash }); console.log(block);"
+      }
+    },
+    parameters: [
+      {
+         label: 'hash',
+         exampleValue: '000000000000000015dc777b3ff2611091336355d3f0ee9766a2cf3be8e4b1ce',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    testnet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000000000009c08dc77c3f224d9f5bbe335a78b996ec1e0701e065537ca81',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000ca66fab8083d4f0370d499c3d602e78af5fa69b2427cda15a3f0d96152',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
     liquid: {
       parameters: [
         {
-           label: '',
-           exampleValue: '',
+           label: 'hash',
+           exampleValue: '86aefdd3cf7be8e5781f783fe5d80513e8b3f52f2f1ef61e8e056b7faffc4b78',
            required: true,
            urlParam: false
         }  
@@ -865,15 +1059,24 @@ export const restApiDocsData = [
     liquidtestnet: {
       parameters: [
         {
-           label: '',
-           exampleValue: '',
+           label: 'hash',
+           exampleValue: '8f7cb70f32e2069724212c986f34462fc40180eabf189b44486faf6989824f9a',
            required: true,
            urlParam: false
         }  
       ]  
     },
+    bisq: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '0000000000000000000b24f70ed27da8b282b050f38e20831923211a1f7266d5',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    }
   },
-
 
   
   // {
