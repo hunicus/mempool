@@ -707,6 +707,172 @@ export const restApiDocsData = [
       ]  
     },
   },
+  {
+    type: "endpoint",
+    category: "addresses",
+    httpRequestMethod: "GET",
+    fragment: "get-address-utxo",
+    title: "GET Address UTXO",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Get the list of unspent transaction outputs associated with the address/scripthash. Available fields: <code>txid</code>, <code>vout</code>, <code>value</code>, and <code>status</code> (with the status of the funding tx).",
+    codeTemplates: {
+      curl: {
+        template: "/address%{1}/utxo"
+      },
+      commonjs: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const addressTxsUtxo = await addresses.getAddressTxsUtxo({ address }); document.getElementById(\"result\").textContent = JSON.stringify(addressTxsUtxo, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { addresses } } = mempoolJS(); const address = '%{1}'; const addressTxsUtxo = await addresses.getAddressTxsUtxo({ address }); console.log(addressTxsUtxo);"
+      }
+    },
+    parameters: [
+      {
+         label: 'address',
+         exampleValue: '1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    testnet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'tb1q4kgratttzjvkxfmgd95z54qcq7y6hekdm3w56u',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'tb1phgljew9chp3ec0y6qm75ml8farfq4055kzj8dqrta3ftk30y95tqg7s05m',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquid: {
+      description: "Get the list of unspent transaction outputs associated with the address/scripthash. Available fields: <code>txid</code>, <code>vout</code>, <code>value</code>, and <code>status</code> (with the status of the funding tx). There is also a <code>valuecommitment</code> field that may appear in place of <code>value</code>, plus the following additional fields: <code>asset</code>/<code>assetcommitment</code>, <code>nonce</code>/<code>noncecommitment</code>, <code>surjection_proof</code>, and <code>range_proof</code>.",
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'H2SgrTGaFpmJ7rBz6UntS3qY9urUfocVoU',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      description: "Get the list of unspent transaction outputs associated with the address/scripthash. Available fields: <code>txid</code>, <code>vout</code>, <code>value</code>, and <code>status</code> (with the status of the funding tx). There is also a <code>valuecommitment</code> field that may appear in place of <code>value</code>, plus the following additional fields: <code>asset</code>/<code>assetcommitment</code>, <code>nonce</code>/<code>noncecommitment</code>, <code>surjection_proof</code>, and <code>range_proof</code>.",
+      parameters: [
+        {
+           label: 'address',
+           exampleValue: 'tex1qm48my9kxutdhcj7n828nwa6kuq83qva9s55rr5',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "category",
+    category: "assets",
+    fragment: "assets",
+    title: "Assets",
+    showConditions: liquidNetworks
+  },
+  {
+    type: "endpoint",
+    category: "assets",
+    httpRequestMethod: "GET",
+    fragment: "get-asset",
+    title: "GET Asset",
+    showConditions: liquidNetworks,
+    showCodeExamples: showCodeExamples,
+    description: "Returns information about a Liquid asset.",
+    codeTemplates: {
+      curl: {
+        template: "/asset%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { assets } } = mempoolJS(); const asset_id = '%{1}'; const asset = await assets.getAsset({ asset_id }); document.getElementById(\"result\").textContent = JSON.stringify(asset, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { assets } } = mempoolJS(); const asset_id = '%{1}'; const asset = await assets.getAsset({ asset_id }); console.log(asset);"
+      }
+    },
+    parameters: [
+      {
+         label: 'asset_id',
+         exampleValue: '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'asset_id',
+           exampleValue: 'ac3e0ff248c5051ffd61e00155b7122e5ebc04fd397a0ecbdd4f4e4a56232926',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "endpoint",
+    category: "assets",
+    httpRequestMethod: "GET",
+    fragment: "get-asset-transactions",
+    title: "GET Asset Transactions",
+    showConditions: liquidNetworks,
+    showCodeExamples: showCodeExamples,
+    description: "Returns transactions associated with the specified Liquid asset. For the network's native asset, returns a list of peg in, peg out, and burn transactions. For user-issued assets, returns a list of issuance, reissuance, and burn transactions. Does not include regular transactions transferring this asset.",
+    codeTemplates: {
+      curl: {
+        template: "/asset/:asset_id/txs[/mempool|/chain]"
+      },
+      commonjs: {
+        template: "const { %{0}: { assets } } = mempoolJS(); const asset_id = '%{1}'; const assetTxs = await assets.getAssetTxs({ asset_id, is_mempool: false }); document.getElementById(\"result\").textContent = JSON.stringify(assetTxs, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { assets } } = mempoolJS(); const asset_id = '%{1}'; const assetTxs = await assets.getAssetTxs({ asset_id, is_mempool: false }); console.log(assetTxs);"
+      }
+    },
+    parameters: [
+      {
+         label: '',
+         exampleValue: '',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    liquid: {
+      parameters: [
+        {
+           label: '',
+           exampleValue: '',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: '',
+           exampleValue: '',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+  },
 
 
   

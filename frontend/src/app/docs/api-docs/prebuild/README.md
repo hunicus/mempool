@@ -21,10 +21,6 @@
 
     description: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
 
-    //PROPERTIES FOR ALL NETWORKS - CODE TEMPLATES
-    //the following code templates are applied for ALL networks unless
-    //overridden in network-specific properties.
-
     codeTemplates: {
       curl: {
         template: `/v1/blocks%{1}`  //do not include forward slashes before parameter placeholders
@@ -36,10 +32,6 @@
         template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);`
       }
     },
-
-    //PROPERTIES FOR ALL NETWORKS - PARAMETERS
-    //the following parameters are applied for ALL networks unless overridden in network-specific 
-    //properties.
 
     parameters: [
       {
@@ -53,27 +45,15 @@
     //PROPERTIES FOR ALL NETWORKS - RESPONSE FETCHING SETTINGS
     //setting `explicit` disables response fetching and uses the provided
     //text as a response.
-    //if `freeze` is true, existing response from `api-docs-code.ts` will 
-    //be used, and no http request will be made for a new response.
-    //if `freeze` is false, an http request will be made for a response.
-    //it is possible to set this per network...see signet property below
-    //for example.
-    //see init.sh for further details, including using `force-reset-all` to 
-    //sanity-check all non-explicit endpoints for changes in response 
-    //structure, etc.
 
-    responseSettings: {
-      explicit: ''
-    },
+    responseSettings: {},           //optional; will be overridden by responseSettings objects set by network
 
     //PROPERTIES FOR SIGNET ONLY (EXAMPLE)
     //the following properties override corresponding properties from above
-    //when signet is the network
+    //when signet is the network.
     //a parameters override, if provided, must specify BOTH labels AND 
-    //corresponding exampleValue.,,the entire parameters object is overridden, 
-    //so specifying just exampleValue will NOT work.
-    //the following responseSettings override results in ONLY signet response 
-    //being fetched (for other networks, `freeze` is true, as specified above).
+    //corresponding exampleValues...the entire parameters object is overridden,
+    //so specifying just exampleValues will NOT work.
 
     signet: {
       parameters: [
@@ -84,9 +64,9 @@
           urlParam: false
         }
       ],
-      responseSettings: {                                   //can override single properties (e.g. specify only maxArrayLength for a network and have all other responseSettings from parent apply)
-        explicit: '{ "btc": "hodl", "usd": "shitcoin" }',   //specify a response to use in place of fetching one from the server; this property is optional. if specified, freeze and maxArrayLength are ignored.
-        maxArrayLength: 2                                   //all arrays in response are automatically (and recursively) truncated to a length of 2; specify a maximum array length if desired.
+      responseSettings: {                                   //properties specified here override responseSettings properties from above
+        explicit: '{ "btc": "hodl", "usd": "shitcoin" }',   //specify a response to use in place of fetching one from the server
+        maxArrayLength: 3                                   //all arrays in response are automatically (and recursively) truncated to the specified length (default is 2)
       },
     },
 

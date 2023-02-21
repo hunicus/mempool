@@ -5,9 +5,10 @@ tsc ../api-docs-data.ts
 tsc ../api-docs-code.ts
 
 # options for $1:
-# passing no parameter will get responses for all endpoints where freeze=false
-# pass 'force-reset-all' to get responses for all endpoints (except those where skip=true)
-# pass '<fragment>' to get responses for specific endpoint
+# `node prebuild.js` to fetch responses for all endpoints without explicit values set in their responseSettings && with no cached response in api-docs-code.ts
+# `node prebuild.js <fragment>` to fetch responses for the endpoint corresponding to the specified fragment (all networks)
+# `node prebuild.js <fragment> <network>` to fetch responses for the endpoint corresponding to the specified fragment (only for specified network)
+# `node prebuild.js force-reset-all` to fetch api responses for all endpoints without explicit values set in their responseSettings
 node prebuild.js $1 $2
 
 rm ../api-docs-data.js
