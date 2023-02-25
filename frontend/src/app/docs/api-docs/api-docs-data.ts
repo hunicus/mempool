@@ -1009,7 +1009,7 @@ export const restApiDocsData = [
     description: "Returns details about a block.",
     codeTemplates: {
       curl: {
-        template: "/block%{1}"
+        template: "/v1/block%{1}"
       },
       commonjs: {
         template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const block = await blocks.getBlock({ hash }); document.getElementById(\"result\").textContent = JSON.stringify(block, undefined, 2);"
@@ -1047,6 +1047,11 @@ export const restApiDocsData = [
       ]  
     },
     liquid: {
+      codeTemplates: {
+          curl: {
+              template: "/block%{1}"
+          }
+      },
       parameters: [
         {
            label: 'hash',
@@ -1057,6 +1062,11 @@ export const restApiDocsData = [
       ]  
     },
     liquidtestnet: {
+      codeTemplates: {
+        curl: {
+          template: "/block%{1}"
+        }
+      },
       parameters: [
         {
            label: 'hash',
@@ -1067,6 +1077,11 @@ export const restApiDocsData = [
       ]  
     },
     bisq: {
+      codeTemplates: {
+        curl: {
+          template: "/block%{1}"
+        }
+      },
       parameters: [
         {
            label: 'hash',
