@@ -201,7 +201,7 @@ export const restApiDocsData = [
     title: "GET Market Depth",
     showConditions: [ "bisq" ],
     showCodeExamples: showCodeExamples,
-    description: "Provides list of open offer prices for a single market.",
+    description: "Provides list of open offer prices for a single <code>:market</code>.",
     codeTemplates: {
       curl: {
         template: `/depth?market=%{1}`
@@ -233,7 +233,7 @@ export const restApiDocsData = [
     title: "GET Market HLOC",
     showConditions: [ "bisq" ],
     showCodeExamples: showCodeExamples,
-    description: "Provides hi/low/open/close data for a given market. This can be used to generate a candlestick chart.",
+    description: "Provides hi/low/open/close data for a given <code>:market</code>. This can be used to generate a candlestick chart.",
     codeTemplates: {
       curl: {
         template: "/hloc?market=%{1}"
@@ -286,7 +286,7 @@ export const restApiDocsData = [
     title: "GET Market Offers",
     showConditions: [ "bisq" ],
     showCodeExamples: showCodeExamples,
-    description: "Provides list of open offer details for a single market.",
+    description: "Provides list of open offer details for a single <code>:market</code>.",
     codeTemplates: {
       curl: {
         template: "/offers?market=%{1}"
@@ -315,7 +315,7 @@ export const restApiDocsData = [
     title: "GET Market Ticker",
     showConditions: [ "bisq" ],
     showCodeExamples: showCodeExamples,
-    description: "Provides 24-hour price ticker. Pass a <code>market</code> parameter for ticker on a single market, or pass no parameter for tickers on all markets.",
+    description: "Provides 24-hour price ticker. Pass a <code>:market</code> parameter for ticker on a single market, or pass no parameter for tickers on all markets.",
     codeTemplates: {
       curl: {
         template: "/ticker?market=%{1}"
@@ -346,7 +346,7 @@ export const restApiDocsData = [
     title: "GET Market Trades",
     showConditions: [ "bisq" ],
     showCodeExamples: showCodeExamples,
-    description: "Provides list of completed trades for a single market. Specify the number of trades to return with <code>limit</code>, otherwise, the last 100 trades are returned.",
+    description: "Provides list of completed trades for a single <code>:market</code>. Specify the number of trades to return with <code>:limit</code>, otherwise, the last 100 trades are returned.",
     codeTemplates: {
       curl: {
         template: "/trades?market=%{1}&limit=%{2}"
@@ -417,7 +417,7 @@ export const restApiDocsData = [
     title: "GET Address",
     showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),
     showCodeExamples: showCodeExamples,
-    description: "Returns details about an address.",
+    description: "Returns details about an <code>:address</code>.",
     codeTemplates: {
       curl: {
         template: "/address%{1}"
@@ -1089,7 +1089,10 @@ export const restApiDocsData = [
            required: true,
            urlParam: false
         }  
-      ]  
+      ],
+      responseSettings: {
+        maxArrayLength: 1
+      }
     }
   },
 
