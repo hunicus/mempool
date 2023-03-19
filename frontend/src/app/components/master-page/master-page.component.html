@@ -66,6 +66,86 @@
 
 <router-outlet></router-outlet>
 
-<br>
+<footer>
+  <div class="container-fluid">
+    <div class="row main">
+      <div class="col-sm-4 branding">
+        <h5>The Mempool Open Source Project™</h5>
+        <p>Explore the full Bitcoin ecosystem.</p>
+        <div class="selector">
+          <app-language-selector></app-language-selector>
+        </div>
+        <div class="selector">
+          <app-fiat-selector></app-fiat-selector>
+        </div>
+        <button class="cta btn btn-purple sponsor">Sponsor the Project</button>
+        <p class="cta-secondary"><a href="">Connect to Our Nodes</a></p>
+        <p class="cta-secondary"><a href="">Broadcast a Transaction</a></p>
+      </div>
+      <div class="col-sm-8 links">
+        <div class="row">
+          <div class="col-sm-4">
+            <p class="category">Explore</p>
+            <p><a href="">Mining Dashboard</a></p>
+            <p><a href="">Lightning Dashboard</a></p>
+            <p><a href="">Recent Blocks</a></p>
+            <p><a href="">Recent RBF Transactions</a></p>
+          </div>
+          <div class="col-sm-4 links">
+            <p class="category">Learn</p>
+            <p><a href="">What is a mempool?</a></p>
+            <p><a href="">What is a block explorer?</a></p>
+            <p><a href="">What is a mempool explorer?</a></p>
+            <p><a href="">Why isn't my transaction confirming?</a></p>
+          </div>
+          <div class="col-sm-4 links">
+            <p class="category">Connect</p>
+            <p><a href="">GitHub</a></p>
+            <p><a href="">Twitter</a></p>
+            <p><a href="">Nostr</a></p>
+            <p><a href="">YouTube</a></p>
+            <p><a href="">BitcoinTV</a></p>
+            <p><a href="">Matrix</a></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 links">
+            <p class="category">Resources</p>
+            <p><a href="">FAQs</a></p>
+            <p><a href="">API Documentation</a></p>
+            <p><a href="">About the Project</a></p>
+          </div>
+          <div class="col-sm-4 links">
+            <p class="category">More Networks</p>
+            <p><a href="">Testnet Block Explorer</a></p>
+            <p><a href="">Signet Block Explorer</a></p>
+            <p><a href="">Liquid Block Explorer</a></p>
+            <p><a href="">Bisq Block Explorer</a></p>
+          </div>
+          <div class="col-sm-4 links">
+            <p class="category">Legal</p>
+            <p><a href="">Terms of Service</a></p>
+            <p><a href="">Privacy Policy</a></p>
+            <p><a href="">Trademark Policy</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row version">
+      <div class="col-sm-12">
+        <p>node204.tk7.mempool.space (v2.5.0-dev) [<a href="https://github.com/mempool/mempool/commit/c9f4bdda">c9f4bdda</a>]</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!--<div class="terms-of-service">
+    <a [routerLink]="['/terms-of-service']" i18n="shared.terms-of-service|Terms of Service">Terms of Service</a>
+    |
+    <a [routerLink]="['/privacy-policy']" i18n="shared.privacy-policy|Privacy Policy">Privacy Policy</a>
+    |
+    <a [routerLink]="['/tx/push' | relativeUrl]" i18n="shared.broadcast-transaction|Broadcast a Transaction">Broadcast Transaction</a>
+  </div>-->
+</footer>
 
 </ng-container>
