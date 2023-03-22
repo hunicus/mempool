@@ -1002,14 +1002,61 @@ export const restApiDocsData = [
     type: "endpoint",
     category: "blocks",
     httpRequestMethod: "GET",
-    fragment: "get-block",
-    title: "GET Block",
-    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),
-    showCodeExamples: showCodeExamples,
-    description: "Returns details about a block.",
+    fragment: "get-block-nodejs",
+    title: "GET Block (Node.js)",
+    showConditions: bitcoinNetworks,
+    showCodeExamples: toggleCodeExampleVisibility({
+        "mainnet": [ true, false, false, false ],
+        "testnet": [ true, false, false, false ],
+        "signet": [ true, false, false, false ]
+    }),
+    description: "Returns details about a block using Mempool's Node.js backend.",
     codeTemplates: {
       curl: {
         template: "/v1/block%{1}"
+      }
+    },
+    parameters: [
+      {
+         label: 'hash',
+         exampleValue: '000000000000000015dc777b3ff2611091336355d3f0ee9766a2cf3be8e4b1ce',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    testnet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000000000009c08dc77c3f224d9f5bbe335a78b996ec1e0701e065537ca81',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000ca66fab8083d4f0370d499c3d602e78af5fa69b2427cda15a3f0d96152',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    }
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-esplora",
+    title: "GET Block (Esplora)",
+    showConditions: bitcoinNetworks,
+    showCodeExamples: showCodeExamples,
+    description: "Returns details about a block using Esplora. If you are not running Esplora, you will get a response from the other GET Block endpoint served by Mempool's Node.js backend (see above).",
+    codeTemplates: {
+      curl: {
+        template: "/block%{1}"
       },
       commonjs: {
         template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const block = await blocks.getBlock({ hash }); document.getElementById(\"result\").textContent = JSON.stringify(block, undefined, 2);"
@@ -1045,28 +1092,37 @@ export const restApiDocsData = [
            urlParam: false
         }  
       ]  
-    },
-    liquid: {
-      codeTemplates: {
-          curl: {
-              template: "/block%{1}"
-          }
+    }
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block",
+    title: "GET Block",
+    showConditions: liquidNetworks.concat("bisq"),
+    showCodeExamples: showCodeExamples,
+    description: "Returns details about a block.",
+    codeTemplates: {
+      curl: {
+        template: "/block%{1}"
       },
-      parameters: [
-        {
-           label: 'hash',
-           exampleValue: '86aefdd3cf7be8e5781f783fe5d80513e8b3f52f2f1ef61e8e056b7faffc4b78',
-           required: true,
-           urlParam: false
-        }  
-      ]  
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const block = await blocks.getBlock({ hash }); document.getElementById(\"result\").textContent = JSON.stringify(block, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const block = await blocks.getBlock({ hash }); console.log(block);"
+      }
     },
+    parameters: [
+      {
+        label: 'hash',
+        exampleValue: '86aefdd3cf7be8e5781f783fe5d80513e8b3f52f2f1ef61e8e056b7faffc4b78',
+        required: true,
+        urlParam: false
+      }   
+    ],
     liquidtestnet: {
-      codeTemplates: {
-        curl: {
-          template: "/block%{1}"
-        }
-      },
       parameters: [
         {
            label: 'hash',
@@ -1077,11 +1133,6 @@ export const restApiDocsData = [
       ]  
     },
     bisq: {
-      codeTemplates: {
-        curl: {
-          template: "/block%{1}"
-        }
-      },
       parameters: [
         {
            label: 'hash',
