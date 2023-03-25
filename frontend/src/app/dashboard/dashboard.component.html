@@ -220,7 +220,7 @@
       </p>
     </div>
     <div class="item bar">
-      <h5 class="card-title" i18n="dashboard.memory-usage|Memory usage">Memory usage</h5>
+      <h5 class="card-title" i18n="dashboard.memory-usage|Memory usage" ngbTooltip="Current memory usage for a Bitcoin node not purging transactions. Click for more info."><a class="discreet-link card-title" href="/docs">Memory usage</a></h5>
       <div class="card-text" *ngIf="(isLoadingWebSocket$ | async) === false && mempoolInfoData.value; else loadingbig">
         <div class="progress">
           <div class="progress-bar {{ mempoolInfoData.value.mempoolSizeProgress }}" role="progressbar" [ngStyle]="{'width': (mempoolInfoData.value.memPoolInfo.usage / mempoolInfoData.value.memPoolInfo.maxmempool * 100) + '%' }">&nbsp;</div>
