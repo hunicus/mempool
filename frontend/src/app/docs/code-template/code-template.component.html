@@ -39,7 +39,7 @@
     </li>
   </ul>
   <div [ngbNavOutlet]="navCodeTemplate"></div>
-  <div class="response">
+  <div class="response" *ngIf="shouldShowResponse()">
     <div class="subtitle"><ng-container i18n="API Docs API response">Response</ng-container> <app-clipboard [text]="getResponse( false )"></app-clipboard></div>
     <pre [innerHTML]="getResponse( true )"></pre>
   </div>

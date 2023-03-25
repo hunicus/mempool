@@ -53,6 +53,10 @@ export class CodeTemplateComponent implements OnInit {
     return code.replace('%{DOCUMENT_LOCATION_HOST}',document.location.host).replace('%{CURRENT_NETWORK}',this.network);
   }
 
+  shouldShowResponse() {
+    return ( this.getResponse( false ) ).length > 0;
+  }
+
   getResponse( highlighted ) {
     return ( highlighted ? this.restDocsCode[this.item.fragment][this.network]['responseHighlighted'] : this.restDocsCode[this.item.fragment][this.network]['response'] );
   }

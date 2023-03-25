@@ -900,6 +900,11 @@ export const restApiDocsData = [
         urlParam: false
       }  
     ],
+    responseSettings: {
+      options: {
+        json: false
+      }
+    },
     liquidtestnet: {
       parameters: [
         {
@@ -1146,6 +1151,260 @@ export const restApiDocsData = [
       }
     }
   },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-header",
+    title: "GET Block Header",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Returns the hex-encoded block header.",
+    codeTemplates: {
+      curl: {
+        template: "/block%{1}/header"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockHeader = await blocks.getBlockHeader({ height: 0 }); document.getElementById(\"result\").textContent = JSON.stringify(blockHeight, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockHeader = await blocks.getBlockHeader({ height: 0 }); console.log(blockHeight);"
+      }
+    },
+    parameters: [
+      {
+         label: 'hash',
+         exampleValue: '0000000000000000000065bda8f8a88f2e1e00d9a6887a43d640e52a4c7660f2',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    responseSettings: {
+      options: {
+        json: false
+      }
+    },
+    testnet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000000000009c08dc77c3f224d9f5bbe335a78b996ec1e0701e065537ca81',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000ca66fab8083d4f0370d499c3d602e78af5fa69b2427cda15a3f0d96152',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquid: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '86aefdd3cf7be8e5781f783fe5d80513e8b3f52f2f1ef61e8e056b7faffc4b78',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '8f7cb70f32e2069724212c986f34462fc40180eabf189b44486faf6989824f9a',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-height",
+    title: "GET Block Height",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Returns the hash of the block currently at <code>:height</code>.",
+    codeTemplates: {
+      curl: {
+        template: "/block-height%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockHeight = await blocks.getBlockHeight({ height: 0 }); document.getElementById(\"result\").textContent = JSON.stringify(blockHeight, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockHeight = await blocks.getBlockHeight({ height: 0 }); console.log(blockHeight);"
+      }
+    },
+    parameters: [
+      {
+         label: 'height',
+         exampleValue: '615615',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    responseSettings: {
+      options: {
+        json: false
+      }
+    },
+    testnet: {
+      parameters: [
+        {
+           label: 'height',
+           exampleValue: '2100100',
+           required: true,
+           urlParam: false
+        }  
+      ],
+      responseSettings: {
+        options: {
+          json: false
+        }
+      },
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'height',
+           exampleValue: '48000',
+           required: true,
+           urlParam: false
+        }  
+      ],
+      responseSettings: {
+        options: {
+          json: false
+        }
+      },
+    },
+    liquid: {
+      parameters: [
+        {
+           label: 'height',
+           exampleValue: '1234567',
+           required: true,
+           urlParam: false
+        }  
+      ],
+      responseSettings: {
+        options: {
+          json: false
+        }
+      },
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'height',
+           exampleValue: '150000',
+           required: true,
+           urlParam: false
+        }  
+      ],
+      responseSettings: {
+        options: {
+          json: false
+        }
+      },
+    },
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-raw",
+    title: "GET Block Raw",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Returns the raw block representation in binary.",
+    codeTemplates: {
+      curl: {
+        template: "/block%{1}/raw"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockRaw = await blocks.getBlockRaw({ hash }); document.getElementById(\"result\").textContent = JSON.stringify(blockRaw, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockRaw = await blocks.getBlockRaw({ hash }); console.log(blockRaw);"
+      }
+    },
+    parameters: [
+      {
+         label: 'hash',
+         exampleValue: '0000000000000000000065bda8f8a88f2e1e00d9a6887a43d640e52a4c7660f2',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    responseSettings: {
+      show: false
+    },
+    testnet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000000000009c08dc77c3f224d9f5bbe335a78b996ec1e0701e065537ca81',
+           required: true,
+           urlParam: false
+        }  
+      ],
+      responseSettings: {
+        show: false
+      }
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000ca66fab8083d4f0370d499c3d602e78af5fa69b2427cda15a3f0d96152',
+           required: true,
+           urlParam: false
+        }  
+      ],
+      responseSettings: {
+        show: false
+      }
+    },
+    liquid: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '86aefdd3cf7be8e5781f783fe5d80513e8b3f52f2f1ef61e8e056b7faffc4b78',
+           required: true,
+           urlParam: false
+        }  
+      ],
+      responseSettings: {
+        show: false
+      }
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '67d5eb1aee63c6c2058a088985503ff0626fd3f7f8022bdc74fab36a359164db',
+           required: true,
+           urlParam: false
+        }
+      ],
+      responseSettings: {
+        show: false
+      }
+    },
+  },
+
+
 
   
   // {
