@@ -901,9 +901,7 @@ export const restApiDocsData = [
       }  
     ],
     responseSettings: {
-      options: {
-        json: false
-      }
+      json: false
     },
     liquidtestnet: {
       parameters: [
@@ -975,9 +973,7 @@ export const restApiDocsData = [
     },
     responseSettings: {
       explicit: `PNG`,
-      options: {
-        json: false
-      }
+      json: false
     },
     parameters: [
       {
@@ -1180,9 +1176,7 @@ export const restApiDocsData = [
       }  
     ],
     responseSettings: {
-      options: {
-        json: false
-      }
+      json: false
     },
     testnet: {
       parameters: [
@@ -1254,9 +1248,7 @@ export const restApiDocsData = [
       }  
     ],
     responseSettings: {
-      options: {
-        json: false
-      }
+      json: false
     },
     testnet: {
       parameters: [
@@ -1268,9 +1260,7 @@ export const restApiDocsData = [
         }  
       ],
       responseSettings: {
-        options: {
-          json: false
-        }
+        json: false
       },
     },
     signet: {
@@ -1283,9 +1273,7 @@ export const restApiDocsData = [
         }  
       ],
       responseSettings: {
-        options: {
-          json: false
-        }
+        json: false
       },
     },
     liquid: {
@@ -1298,9 +1286,7 @@ export const restApiDocsData = [
         }  
       ],
       responseSettings: {
-        options: {
-          json: false
-        }
+        json: false
       },
     },
     liquidtestnet: {
@@ -1313,9 +1299,7 @@ export const restApiDocsData = [
         }  
       ],
       responseSettings: {
-        options: {
-          json: false
-        }
+        json: false
       },
     },
   },
@@ -1403,8 +1387,120 @@ export const restApiDocsData = [
       }
     },
   },
-
-
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-status",
+    title: "GET Block Status",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Returns the confirmation status of a block. Available fields: <code>in_best_chain</code> (boolean, false for orphaned blocks), <code>next_best</code> (the hash of the next block, only available for blocks in the best chain).",
+    codeTemplates: {
+      curl: {
+        template: "/block%{1}/status"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockStatus = await blocks.getBlockStatus({ hash }); document.getElementById(\"result\").textContent = JSON.stringify(blockStatus, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockStatus = await blocks.getBlockStatus({ hash }); console.log(blockStatus);"
+      }
+    },
+    parameters: [
+      {
+         label: 'hash',
+         exampleValue: '0000000000000000000065bda8f8a88f2e1e00d9a6887a43d640e52a4c7660f2',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    testnet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000000000009c08dc77c3f224d9f5bbe335a78b996ec1e0701e065537ca81',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '000000ca66fab8083d4f0370d499c3d602e78af5fa69b2427cda15a3f0d96152',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquid: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '86aefdd3cf7be8e5781f783fe5d80513e8b3f52f2f1ef61e8e056b7faffc4b78',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'hash',
+           exampleValue: '67d5eb1aee63c6c2058a088985503ff0626fd3f7f8022bdc74fab36a359164db',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-tip-height",
+    title: "GET Block Tip Height",
+    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),
+    showCodeExamples: showCodeExamples,
+    description: "Returns the height of the last block.",
+    codeTemplates: {
+      curl: {
+        template: "/blocks/tip/height"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const blocksTipHeight = await blocks.getBlocksTipHeight(); document.getElementById(\"result\").textContent = JSON.stringify(blocksTipHeight, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const blocksTipHeight = await blocks.getBlocksTipHeight(); console.log(blocksTipHeight);"
+      }
+    },
+    responseSettings: {
+      json: false
+    }
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-tip-hash",
+    title: "GET Block Tip Hash",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Returns the hash of the last block.",
+    codeTemplates: {
+      curl: {
+        template: "/blocks/tip/hash"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const blocksTipHash = await blocks.getBlocksTipHash(); document.getElementById(\"result\").textContent = JSON.stringify(blocksTipHash, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const blocksTipHash = await blocks.getBlocksTipHash(); console.log(blocksTipHash);"
+      }
+    }
+  },
 
   
   // {
