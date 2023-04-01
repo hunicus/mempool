@@ -1499,6 +1499,459 @@ export const restApiDocsData = [
       esmodule: {
         template: "const { %{0}: { blocks } } = mempoolJS(); const blocksTipHash = await blocks.getBlocksTipHash(); console.log(blocksTipHash);"
       }
+    },
+    responseSettings: {
+      json: false
+    }
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-transaction-id",
+    title: "GET Block Transaction ID",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Returns the transaction at the <code>:index</code> within the specified block.",
+    codeTemplates: {
+      curl: {
+        template: "/block%{1}/txid%{2}"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockTxid = await blocks.getBlockTxid({ hash, index: %{2} }); document.getElementById(\"result\").textContent = JSON.stringify(blockTxid, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockTxid = await blocks.getBlockTxid({ hash, index: %{2} }); console.log(blockTxid);"
+      }
+    },
+    parameters: [
+      {
+         label: 'hash',
+         exampleValue: '000000000000000015dc777b3ff2611091336355d3f0ee9766a2cf3be8e4b1ce',
+         required: true,
+         urlParam: false
+      },
+      {
+        label: 'index',
+        exampleValue: '218',
+        required: true,
+        urlParam: false
+      }    
+    ],
+    responseSettings: {
+      json: false
+    },
+    testnet: {
+      parameters: [
+        {
+          label: 'hash',
+          exampleValue: '000000000000004a3ff1faff12c446f711c650454ff8af7f41d1e8b2564dd74b',
+          required: true,
+          urlParam: false
+          },
+          {
+          label: 'index',
+          exampleValue: '1',
+          required: true,
+          urlParam: false
+        }   
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+          label: 'hash',
+          exampleValue: '0000014b62b53d2550c310208af9d792ab7a9a2487a67d82c06b17b201ee602f',
+          required: true,
+          urlParam: false
+          },
+          {
+          label: 'index',
+          exampleValue: '1',
+          required: true,
+          urlParam: false
+        }
+      ]  
+    },
+    liquid: {
+      parameters: [
+        {
+          label: 'hash',
+          exampleValue: 'dbbf73007879859f2c55b8605751498ad0d2848db0fdedeadcbdc0cf4f02ee13',
+          required: true,
+          urlParam: false
+          },
+          {
+          label: 'index',
+          exampleValue: '1',
+          required: true,
+          urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+          label: 'hash',
+          exampleValue: 'b6b4aeefa220c6a17da116bda666e869b3146967d2479656448a8bce1e799b8f',
+          required: true,
+          urlParam: false
+          },
+          {
+          label: 'index',
+          exampleValue: '1',
+          required: true,
+          urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-transaction-ids",
+    title: "GET Block Transaction IDs",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Returns the TXIDs of all transactions in the block with the specified <code>:hash</code>.",
+    codeTemplates: {
+      curl: {
+        template: "/block%{1}/txids"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockTxids = await blocks.getBlockTxids({ hash }); document.getElementById(\"result\").textContent = JSON.stringify(blockTxids, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockTxids = await blocks.getBlockTxids({ hash }); console.log(blockTxids);"
+      }
+    },
+    parameters: [
+      {
+         label: 'hash',
+         exampleValue: '000000000000000015dc777b3ff2611091336355d3f0ee9766a2cf3be8e4b1ce',
+         required: true,
+         urlParam: false
+      }  
+    ],
+    responseSettings: {
+      maxArrayLength: 5
+    },
+    testnet: {
+      parameters: [
+        {
+           label: '',
+           exampleValue: '000000000000004a3ff1faff12c446f711c650454ff8af7f41d1e8b2564dd74b',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+           label: '',
+           exampleValue: '0000014b62b53d2550c310208af9d792ab7a9a2487a67d82c06b17b201ee602f',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquid: {
+      parameters: [
+        {
+           label: '',
+           exampleValue: 'dbbf73007879859f2c55b8605751498ad0d2848db0fdedeadcbdc0cf4f02ee13',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: '',
+           exampleValue: 'b6b4aeefa220c6a17da116bda666e869b3146967d2479656448a8bce1e799b8f',
+           required: true,
+           urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-block-transactions",
+    title: "GET Block Transactions",
+    showConditions: bitcoinNetworks.concat(liquidNetworks),
+    showCodeExamples: showCodeExamples,
+    description: "Returns a list of transactions in the block (up to 25 transactions beginning at <code>:startIndex</code>). Transactions do not have the <code>status</code> field since they are all confirmed.",
+    codeTemplates: {
+      curl: {
+        template: "/block%{1}/txs%{2}"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockTxs = await blocks.getBlockTxs({ hash }); document.getElementById(\"result\").textContent = JSON.stringify(blockTxs, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const hash = '%{1}'; const blockTxs = await blocks.getBlockTxs({ hash }); console.log(blockTxs);"
+      }
+    },
+    parameters: [
+      {
+         label: 'hash',
+         exampleValue: '000000000000000015dc777b3ff2611091336355d3f0ee9766a2cf3be8e4b1ce',
+         required: true,
+         urlParam: false
+      },
+      {
+        label: 'startIndex',
+        exampleValue: '',
+        required: false,
+        urlParam: false
+      }  
+    ],
+    responseSettings: {
+      maxArrayLength: 1
+    },
+    testnet: {
+      parameters: [
+        {
+          label: 'hash',
+          exampleValue: '000000000000004a3ff1faff12c446f711c650454ff8af7f41d1e8b2564dd74b',
+          required: true,
+          urlParam: false
+        },
+        {
+          label: 'startIndex',
+          exampleValue: '',
+          required: false,
+          urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+          label: 'hash',
+          exampleValue: '000000e29b097a544c013257a2938c57e0f713305fd01ff13a99b28bb8f44d5b',
+          required: true,
+          urlParam: false
+        },
+        {
+          label: 'startIndex',
+          exampleValue: '',
+          required: false,
+          urlParam: false
+        }  
+      ]  
+    },
+    liquid: {
+      parameters: [
+        {
+          label: 'hash',
+          exampleValue: 'dbbf73007879859f2c55b8605751498ad0d2848db0fdedeadcbdc0cf4f02ee13',
+          required: true,
+          urlParam: false
+        },
+        {
+          label: 'startIndex',
+          exampleValue: '',
+          required: false,
+          urlParam: false
+        }  
+      ]  
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+          label: 'hash',
+          exampleValue: 'b6b4aeefa220c6a17da116bda666e869b3146967d2479656448a8bce1e799b8f',
+          required: true,
+          urlParam: false
+        },
+        {
+          label: 'startIndex',
+          exampleValue: '',
+          required: false,
+          urlParam: false
+        }  
+      ]  
+    },
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-blocks-nodejs",
+    title: "GET Blocks (Node.js)",
+    showConditions: bitcoinNetworks,
+    showCodeExamples: showCodeExamples,
+    description: "<p>Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field using Mempool's Node.js backend.</p><p>If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.</p>",
+    codeTemplates: {
+      curl: {
+        template: "/v1/blocks%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById(\"result\").textContent = JSON.stringify(getBlocks, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);"
+      }
+    },
+    parameters: [
+      {
+         label: 'startHeight',
+         exampleValue: '730000',
+         required: false,
+         urlParam: false
+      }  
+    ],
+    responseSettings: {
+      maxArrayLength: 1
+    },
+    testnet: {
+      parameters: [
+        {
+           label: 'startHeight',
+           exampleValue: '2091187',
+           required: false,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+          label: 'startHeight',
+          exampleValue: '53783',
+          required: false,
+          urlParam: false
+        }
+      ]
+    }
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-blocks-esplora",
+    title: "GET Blocks (Esplora)",
+    showConditions: bitcoinNetworks,
+    showCodeExamples: showCodeExamples,
+    description: "<p>Returns details on the past 15 blocks using Esplora. If you are not running Esplora, you will get a response from the other GET Blocks endpoint served by Mempool's Node.js backend (see above).</p><p>If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.</p>",
+    codeTemplates: {
+      curl: {
+        template: "/blocks%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById(\"result\").textContent = JSON.stringify(getBlocks, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);"
+      }
+    },
+    parameters: [
+      {
+         label: 'startHeight',
+         exampleValue: '730000',
+         required: false,
+         urlParam: false
+      }  
+    ],
+    responseSettings: {
+      maxArrayLength: 2
+    },
+    testnet: {
+      parameters: [
+        {
+           label: 'startHeight',
+           exampleValue: '2091187',
+           required: false,
+           urlParam: false
+        }  
+      ]  
+    },
+    signet: {
+      parameters: [
+        {
+          label: 'startHeight',
+          exampleValue: '53783',
+          required: false,
+          urlParam: false
+        }
+      ]
+    }
+  },
+  {
+    type: "endpoint",
+    category: "blocks",
+    httpRequestMethod: "GET",
+    fragment: "get-blocks",
+    title: "GET Blocks",
+    showConditions: liquidNetworks.concat(["bisq"]),
+    showCodeExamples: showCodeExamples,
+    description: "<p>Returns details on the past 10 blocks. If <code>:startHeight</code> is specified, the past 10 blocks before (and including) <code>:startHeight</code> are returned.</p>",
+    codeTemplates: {
+      curl: {
+        template: "/blocks%{1}"
+      },
+      commonjs: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById(\"result\").textContent = JSON.stringify(getBlocks, undefined, 2);"
+      },
+      esmodule: {
+        template: "const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);"
+      }
+    },
+    parameters: [
+      {
+         label: 'startHeight',
+         exampleValue: '1472246',
+         required: false,
+         urlParam: false
+      }  
+    ],
+    responseSettings: {
+      maxArrayLength: 2
+    },
+    liquidtestnet: {
+      parameters: [
+        {
+           label: 'startHeight',
+           exampleValue: '150000',
+           required: false,
+           urlParam: false
+        }  
+      ]  
+    },
+    bisq: {
+      description: "<p>Returns the past <code>n</code> blocks with BSQ transactions starting <code>m</code> blocks ago.</p><p>Assume a block height of 700,000. Query <code>/blocks/0/10</code> for the past 10 blocks before 700,000 with BSQ transactions. Query <code>/blocks/1000/10</code> for the past 10 blocks before 699,000 with BSQ transactions.</p>",
+      codeTemplates: {
+        curl: {
+          template: "/blocks%{1}%{2}"
+        },
+        commonjs: {
+          template: "const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); document.getElementById(\"result\").textContent = JSON.stringify(getBlocks, undefined, 2);"
+        },
+        esmodule: {
+          template: "const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ startHeight: %{1} }); console.log(getBlocks);"
+        }
+      },
+      parameters: [
+        {
+           label: 'm',
+           exampleValue: '0',
+           required: true,
+           urlParam: false
+        },
+        {
+          label: 'n',
+          exampleValue: '5',
+          required: true,
+          urlParam: false
+        }  
+      ]
     }
   },
 
