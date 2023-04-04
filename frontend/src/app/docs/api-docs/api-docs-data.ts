@@ -2010,17 +2010,11 @@ export const restApiDocsData = [
     fragment: "get-mining-pools",
     title: "GET Mining Pools",
     showConditions: bitcoinNetworks,
-    showCodeExamples: showCodeExamples,
+    showCodeExamples: toggleCodeExampleVisibility({ "mainnet": [ true, false, false, false ], "testnet": [ true, false, false, false ], "signet": [ true, false, false, false ] }),
     description: "Returns a list of all known mining pools ordered by blocks found over the specified trailing <code>:timePeriod</code>.</p><p>Leave <code>:timePeriod</code> unspecified to get all available data, or specify one of the following values: " + miningTimeIntervals + ".",
     codeTemplates: {
       curl: {
         template: "/v1/mining/pools%{1}"
-      },
-      commonjs: {
-        template: ""
-      },
-      esmodule: {
-        template: ""
       }
     },
     parameters: [
@@ -2035,22 +2029,22 @@ export const restApiDocsData = [
       parameters: [
         {
            label: 'timePeriod',
-           exampleValue: '',
+           exampleValue: '3y',
            required: false,
            urlParam: false
         }  
       ]  
     },
-    signet: [
-      {
-        parameters: {
+    signet: {
+      parameters: [
+        {
           label: 'timePeriod',
-          exampleValue: '',
+          exampleValue: '3y',
           required: false,
           urlParam: false
         }
-      }
-    ]
+      ]
+    }
   },
 
 
