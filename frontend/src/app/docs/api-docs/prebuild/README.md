@@ -1,18 +1,18 @@
 <!--------------------------------------------------------------------------------------------------
 
-  EXAMPLE OF HOW A REST API DOC OBJECT WORKS
+  EXAMPLE OF HOW AN REST API DOC OBJECT WORKS
 
   {
     //GENERAL INFO
     //the following properties must be specified for every rest endpoint
 
-    type: "endpoint",                                                               //string, must be either 'endpoint' or 'category'
+    type: "endpoint",                                                               //string; must be either 'endpoint' or 'category'
     category: "blocks",             
     httpRequestMethod: "GET",       
-    fragment: "get-blocks",                                                         //string, for anchor links
+    fragment: "get-blocks",                                                         //string; for anchor links
     title: "GET Blocks",            
-    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),        //array that determines which network docs pages show the endpoint
-    showCodeExamples: showCodeExamples,                                             //an object that determines which code examples are shown on each network; can be modified using toggleCodeExampleVisibility() for convenience
+    showConditions: bitcoinNetworks.concat(liquidNetworks).concat(["bisq"]),        //array; determines which network's docs pages show the endpoint
+    showCodeExamples: showCodeExamples,                                             //object; determines which code examples are shown on each network, can be modified using toggleCodeExampleVisibility() for convenience
 
     //PROPERTIES FOR ALL NETWORKS
     //the following properties apply to ALL networks unless overridden 
@@ -21,6 +21,7 @@
 
     description: "Returns details on the past 15 blocks with fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
 
+    //put code templates on single line (no line breaks); prebuild.js will format
     codeTemplates: {
       curl: {
         template: `/v1/blocks%{1}`  //do not include forward slashes before parameter placeholders
@@ -37,8 +38,8 @@
       {
         label: 'startHeight',
         exampleValues: '730000',
-        required: false,            //if optional, url will show with brackets around parameter to indicate optionality
-        urlParam: false             //true if parameter is in /api/block/parameter format; false if in /api/block?param=value format
+        required: false,            //boolean; if not required, url will show with square brackets around parameter to indicate optionality
+        urlParam: false             //boolean; should be true if parameter is in /api/block/parameter format, and false if in /api/block?param=value format
       }
     ],
 
@@ -46,11 +47,11 @@
     //setting `explicit` disables response fetching and uses the provided
     //text as a response.
 
-    responseSettings: {},           //optional; will be overridden by responseSettings objects set by network
+    responseSettings: {},           //optional; can be overridden by responseSettings objects set by network
 
     //PROPERTIES FOR SIGNET ONLY (EXAMPLE)
     //the following properties override corresponding properties from above
-    //when signet is the network.
+    //for signet only
     //a parameters override, if provided, must specify BOTH labels AND 
     //corresponding exampleValues...the entire parameters object is overridden,
     //so specifying just exampleValues will NOT work.
@@ -66,8 +67,8 @@
       ],
       responseSettings: {                                   //properties specified here override responseSettings properties from above
         explicit: '{ "btc": "hodl", "usd": "shitcoin" }',   //specify a response to use in place of fetching one from the server
-        json: false,                                        //default is true; specify as false to avoid parsing response as json
-        show: false,                                        //hides response entirely; only use if no response should be shown at all (e.g. POST, etc)
+        json: true,                                         //default is true; specify as false to avoid parsing response as json
+        show: true,                                         //hides response entirely; only use if no response should be shown at all (e.g. POST, etc)
         maxArrayLength: 3                                   //all arrays in response are automatically (and recursively) truncated to the specified length (default is 2)
       },
     },
@@ -95,7 +96,7 @@
           template: `const { %{0}: { blocks } } = mempoolJS(); const getBlocks = await blocks.getBlocks({ index: %{1}, length: %{2} }); console.log(getBlocks);`
         }
       },
-      parameters: [                         //if >1 parameters, must specify each property for each parameter
+      parameters: [                         //must specify each property for each parameter
         {
           label: 'm',
           exampleValue: 0,

@@ -128,7 +128,7 @@ export const restApiDocsData = [
     title: "GET Difficulty Adjustment",
     showConditions: bitcoinNetworks,
     showCodeExamples: showCodeExamples,
-    description: "Returns details about difficulty adjustment.",
+    description: "Returns details about previous difficulty adjustment, current epoch progress, and projections for the next difficulty adjustment.",
     codeTemplates: {
       curl: {
         template: `/v1/difficulty-adjustment`
