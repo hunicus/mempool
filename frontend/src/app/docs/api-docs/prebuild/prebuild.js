@@ -7,15 +7,16 @@ const request = require('request');
 const apiDocs = require('../api-docs-data.js');
 const apiDocsResponses = require('../api-docs-code.js');
 
-const restDocs = apiDocs.restApiDocsData;
-const restDocsCode = apiDocsResponses.restApiDocsCode;
-const mode = process.argv;
-const networks = ["mainnet", "testnet", "signet", "liquid", "liquidtestnet", "bisq"];
-
 let formattedData = {};
 let responseObj = {};
 let merged = {};
 let url = '';
+let cachedResponses = apiDocsResponses.restApiDocsCode;
+
+const restDocs = apiDocs.restApiDocsData;
+const restDocsCode = ( typeof apiDocsResponses.restApiDocsCode === "object" ? apiDocsResponses.restApiDocsCode : {} );
+const mode = process.argv;
+const networks = ["mainnet", "testnet", "signet", "liquid", "liquidtestnet", "bisq"];
 
 loadLanguages( ['json', 'bash'] ) ; //for prism syntax highlighting; javascript is loaded by default
 
@@ -237,7 +238,11 @@ function processParameters( merged ) {
 
 function insertCurlParameters( templateText, parameters, display ) {
     for( let i = 0; i < parameters.length; i++ ) {
-        templateText = templateText.replace( '%{' + (i+1) + '}', `${ !display || parameters[i]['required'] || parameters[i]['urlParam'] ? '' : '[' }${ parameters[i]['urlParam'] ? '' : '/' }${ display ? ':' + parameters[i]['label'] : parameters[i]['exampleValue'] }${ !display || parameters[i]['required'] || parameters[i]['urlParam'] ? '' : ']' }` );
+        if( display ) {
+            templateText = templateText.replace( '%{' + (i+1) + '}',  `${ parameters[i]['required'] ? '' : '[' }${ parameters[i]['urlParam'] ? '' : '/' }${ ":" + parameters[i]['label'] }${ parameters[i]['required'] ? '' : ']' }` );
+        } else {
+            templateText = templateText.replace( '%{' + (i+1) + '}',  ( parameters[i]['exampleValue'].length > 0 ) ? `${ parameters[i]['urlParam'] ? '' : '/' }${ parameters[i]['exampleValue'] }` : '' );  
+        }   
     }
     return templateText;
 }
